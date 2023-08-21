@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 
 const Home = () => {
     return (
-        <div>LJ Connect frontend.</div>
+        <div className="text-oceanic-blue">LJ Connect frontend.</div>
     )
 }
 
