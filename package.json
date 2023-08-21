@@ -4,8 +4,8 @@
   "description": "React frontend for LJ Connect",
   "scripts": {
     "test": "jest",
-    "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html"
   },
   "repository": {
     "type": "git",
