@@ -1,0 +1,31 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "React frontend for LJ Connect",
+  "scripts": {
+    "test": "jest",
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarshDobariya79/LJ-Connect-frontend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HarshDobariya79/LJ-Connect-frontend/issues"
+  },
+  "homepage": "https://github.com/HarshDobariya79/LJ-Connect-frontend#readme",
+  "devDependencies": {
+    "@babel/core": "^7.22.10",
+    "@parcel/babel-preset-env": "^2.9.3",
+    "babel-plugin-transform-remove-console": "^6.9.4",
+    "parcel": "^2.9.3",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
