@@ -1,14 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
+import Login from "./components/Login/Login";
+import Home from "./components/Home/Home";
+import { Provider } from "react-redux";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setHasRefreshToken,
+  renewAccessToken,
+} from "./actions/authActions.js";
+import store from "./store";
 
-const Home = () => {
-    return (
-        <div className="text-oceanic-blue">LJ Connect frontend.</div>
-    )
-}
+const App = () => {
+  const dispatch = useDispatch();
 
-// Defining the root of the document
+  useEffect(() => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      dispatch(setHasRefreshToken(true, refreshToken));
+      dispatch(renewAccessToken(refreshToken));
+    }
+  }, []);
+
+  const { hasRefreshToken } = useSelector((state) => state.auth);
+
+  return <>{hasRefreshToken ? <Home /> : <Login />}</>;
+};
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-// Adding container element to the root, all the content inside the root will be replaced
-root.render(<Home />);
+root.render(
+  <Provider store={store}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  </Provider>
+);
