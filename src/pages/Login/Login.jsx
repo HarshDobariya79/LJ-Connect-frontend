@@ -1,36 +1,12 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { sendCodeToServer } from "../../actions/authActions";
+import React from "react";
 import logo from "../../assets/images/logo.png";
 import studentsImg from "../../assets/images/LoginPage/students.png";
 import formHeader from "../../assets/images/LoginPage/form-header.svg";
-import LoginButton from "../LoginButton/LoginButton";
-import { useNavigate } from "react-router-dom";
-
-const extractCodeAndDispatch = (dispatch) => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get("code");
-
-  if (code) {
-    dispatch(sendCodeToServer(code));
-  }
-};
+import LoginButton from "../../components/LoginButton/LoginButton";
 
 const Login = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    try {
-      extractCodeAndDispatch(dispatch);
-      navigate("/");
-    } catch {
-      navigate("/login");
-    }
-  }, [dispatch, navigate]);
-
   const loginButtonTypes = ["student", "staff"];
-
+  
   return (
     <div className="flex justify-center items-center h-screen bg-oceanic-blue">
       <div className="w-[75%] h-[75%] bg-white flex flex-col">
