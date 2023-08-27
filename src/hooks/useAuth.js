@@ -10,6 +10,16 @@ export const AuthProvider = ({ children }) => {
     if (refreshToken) {
       setIsLoggedIn(true);
     }
+    const timer = setInterval(() => {
+      console.log('timer running');
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (!refreshToken && isLoggedIn) {
+        setIsLoggedIn(false);
+      }
+    }, 500);
+
+    return () => clearInterval(timer);
+
   }, []);
 
   return (
