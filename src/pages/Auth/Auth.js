@@ -1,36 +1,38 @@
-import { useDispatch } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { sendCodeToServer } from "../../actions/authActions";
 import { useAuth } from "../../hooks/useAuth";
-
-const extractCodeAndDispatch = (dispatch, setIsLoggedIn, redirect) => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get("code");
-
-  if (code) {
-    dispatch(sendCodeToServer(code, setIsLoggedIn, redirect));
-  } else {
-    redirect();
-  }
-};
-
+import api from "../../services/api";
 
 const Auth = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const { from } = location.state || { from: { pathname: "/home" } };
   const { setIsLoggedIn } = useAuth();
-  console.error(from);
-  
-  const redirect = () => {
-    navigate(from)
-  }
+  const navigate = useNavigate();
 
   useEffect(() => {
-    extractCodeAndDispatch(dispatch, setIsLoggedIn, redirect);
-  }, [dispatch, navigate]);
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code");
+
+    if (code) {
+      const response = api
+        .post(process.env.GOOGLE_LOGIN_V1, {
+          code,
+        })
+        .then((response) => {
+          if (response?.status === 200) {
+            const { access, refresh } = response.data;
+            localStorage.setItem("accessToken", access);
+            localStorage.setItem("refreshToken", refresh);
+            setIsLoggedIn(true);
+            navigate("/home");
+          }
+        })
+        .catch((error) => {
+          console.log("Login request failed: " + error);
+          navigate("/login");
+        });
+    } else {
+      navigate("/home");
+    }
+  }, []);
 };
 
 export default Auth;
