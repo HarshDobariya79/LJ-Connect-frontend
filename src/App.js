@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
-import { Provider } from "react-redux";
 import {
   BrowserRouter as Router,
   Navigate,
@@ -10,7 +9,6 @@ import {
   Routes,
 } from "react-router-dom";
 import ProtectedRoutes from "./utils/routeMiddleware";
-import store from "./store";
 import { AuthProvider } from "./hooks/useAuth";
 import Auth from "./pages/Auth/Auth";
 import { useAuth } from "./hooks/useAuth";
@@ -38,11 +36,9 @@ const App = () => {
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <Provider store={store}>
-    <AuthProvider>
-      <Router>
-        <App />
-      </Router>
-    </AuthProvider>
-  </Provider>
+  <AuthProvider>
+    <Router>
+      <App />
+    </Router>
+  </AuthProvider>
 );
