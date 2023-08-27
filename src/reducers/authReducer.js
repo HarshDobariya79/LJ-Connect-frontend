@@ -1,7 +1,6 @@
 const initialState = {
   accessToken: null,
   refreshToken: null,
-  hasRefreshToken: false,
 };
 
 const authReducer = (state = initialState, action) => {
@@ -9,18 +8,10 @@ const authReducer = (state = initialState, action) => {
     case "LOGIN_SUCCESS": {
       const { accessToken, refreshToken } = action.payload;
       localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("accessToken", accessToken);
       return {
         ...state,
         accessToken,
-        refreshToken,
-        hasRefreshToken: true,
-      };
-    }
-    case "SET_HAS_REFRESH_TOKEN": {
-      const { hasToken, refreshToken } = action.payload;
-      return {
-        ...state,
-        hasRefreshToken: hasToken,
         refreshToken,
       };
     }

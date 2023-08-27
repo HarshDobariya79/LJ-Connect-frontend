@@ -21,17 +21,20 @@ export const setHasRefreshToken = (hasToken, refreshToken) => ({
 });
 
 // Thunk Actions
-export const sendCodeToServer = (code) => async (dispatch) => {
-  try {
-    const response = await api.post(process.env.GOOGLE_LOGIN_V1, {
-      code,
-    });
-    const { access, refresh } = response.data;
-    dispatch(loginSuccess(access, refresh));
-  } catch (error) {
-    console.error("Sending code failed:", error);
-  }
-};
+export const sendCodeToServer =
+  (code, setIsLoggedIn, redirect) => async (dispatch) => {
+    try {
+      const response = await api.post(process.env.GOOGLE_LOGIN_V1, {
+        code,
+      });
+      const { access, refresh } = response.data;
+      dispatch(loginSuccess(access, refresh));
+      setIsLoggedIn(true);
+      redirect();
+    } catch (error) {
+      console.error("Sending code failed:", error);
+    }
+  };
 
 export const renewAccessToken = (refreshToken) => async (dispatch) => {
   try {
@@ -41,7 +44,7 @@ export const renewAccessToken = (refreshToken) => async (dispatch) => {
     const { access } = response.data;
     dispatch(loginSuccess(access, refreshToken));
   } catch (error) {
-    console.log('renew access token failed', error);
+    console.log("renew access token failed", error);
     dispatch(logout());
   }
 };
