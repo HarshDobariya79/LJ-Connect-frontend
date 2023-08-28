@@ -16,14 +16,14 @@ const Dashboard = () => {
         }
       })
       .catch((error) => {
-        logout();
         console.log("request failed: " + error);
+        logout();
       });
   }, []);
 
   return (
     <>
-      <div className="flex w-screen min-h-screen">
+      <div className="flex w-screen max-h-screen">
         <Sidebar
           name={
             profile ? profile?.first_name + " " + profile?.last_name : undefined

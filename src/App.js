@@ -12,6 +12,7 @@ import ProtectedRoutes from "./utils/routeMiddleware";
 import { AuthProvider } from "./hooks/useAuth";
 import Auth from "./pages/Auth/Auth";
 import { useAuth } from "./hooks/useAuth";
+import Staff from "./pages/Staff/Staff";
 
 const App = () => {
   const { isLoggedIn } = useAuth();
@@ -23,6 +24,9 @@ const App = () => {
       >
         <Route path="/dashboard" element={<Dashboard />}>
           <Route path="" element={<div>This is Dashboard</div>} />
+        </Route>
+        <Route path="/staff" element={<Dashboard />}>
+          <Route path="" element={<Staff />} />  
         </Route>
       </Route>
       <Route path="/" element={<Auth />} exact />

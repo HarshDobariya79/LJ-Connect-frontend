@@ -20,12 +20,17 @@ const Sidebar = (props) => {
       title: "Dashboard",
       path: "/dashboard",
     },
+    {
+      role: ["admin"],
+      title: "Staff",
+      path: "/staff",
+    },
   ];
 
   const applyConfig = config.filter((obj) => obj?.role.includes(role));
 
   return (
-    <div className="flex flex-col justify-between w-1/6">
+    <div className="flex flex-col justify-between w-1/6 max-h-screen overscroll-y-none min-h-screen relative">
       <div className="flex flex-col">
         <img src={Logo} alt="LJ Logo" className="w-4/5 mt-3 mx-auto" />
         <hr className="w-[90%] mx-auto mb-6 mt-3" />
