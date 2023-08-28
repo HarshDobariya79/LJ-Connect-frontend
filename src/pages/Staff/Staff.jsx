@@ -248,11 +248,7 @@ const Staff = () => {
                       {staff.email}
                     </td>
                     <td className="px-6 py-4">
-                      {staff?.first_name +
-                        " " +
-                        staff.middle_name +
-                        " " +
-                        staff.last_name}
+                      {`${staff?.first_name} ${staff?.middle_name || ""} ${staff?.last_name}`}
                     </td>
                     <td className="px-6 py-4">{staff.category}</td>
                     <td className="px-6 py-4">{staff.mobile_number}</td>
