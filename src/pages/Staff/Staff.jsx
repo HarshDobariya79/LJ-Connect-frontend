@@ -291,7 +291,7 @@ const Staff = () => {
         <div className="flex flex-col items-center justify-center bg-black bg-opacity-20 w-full h-full absolute top-0 left-0">
           <div className="flex flex-col justify-start w-3/5 max-h-11/12 bg-white rounded-xl">
             <div className="h-16 bg-gray-100 w-full rounded-xl flex justify-center items-center font-bold text-gray-600">
-              Edit Staff Detail
+              {mode === "new" ? "New" : "Edit"} Staff Detail
             </div>
             <div className="p-9 overflow-x-auto">
               <div className="mb-6">
