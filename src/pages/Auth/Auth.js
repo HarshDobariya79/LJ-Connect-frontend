@@ -22,7 +22,7 @@ const Auth = () => {
             localStorage.setItem("accessToken", access);
             localStorage.setItem("refreshToken", refresh);
             setIsLoggedIn(true);
-            navigate("/home");
+            navigate("/dashboard");
           }
         })
         .catch((error) => {
@@ -30,7 +30,7 @@ const Auth = () => {
           navigate("/login");
         });
     } else {
-      navigate("/home");
+      navigate("/dashboard");
     }
   }, []);
 };

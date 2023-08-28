@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import Login from "./pages/Login/Login";
-import Home from "./pages/Home/Home";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import {
   BrowserRouter as Router,
   Navigate,
@@ -18,15 +18,17 @@ const App = () => {
 
   return (
     <Routes>
-      <Route element={<ProtectedRoutes />}>
-        <Route path="/home" element={<Home />}>
-          <Route path="" element={<div>This is Home</div>} />
+      <Route
+        element={isLoggedIn ? <ProtectedRoutes /> : <Navigate to="/login" />}
+      >
+        <Route path="/dashboard" element={<Dashboard />}>
+          <Route path="" element={<div>This is Dashboard</div>} />
         </Route>
       </Route>
       <Route path="/" element={<Auth />} exact />
       <Route
         path="/login"
-        element={!isLoggedIn ? <Login /> : <Navigate to="/home" />}
+        element={!isLoggedIn ? <Login /> : <Navigate to="/dashboard" />}
       />
       <Route path="*" element={<div>Invalid path</div>} />
     </Routes>
