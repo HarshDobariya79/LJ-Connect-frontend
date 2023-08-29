@@ -14,6 +14,7 @@ export default api;
 
 let accessToken = localStorage.getItem("accessToken");
 let refreshToken = localStorage.getItem("refreshToken");
+
 const protectedApi = axios.create({
   baseURL,
   timeout: 5000,
@@ -24,19 +25,17 @@ const protectedApi = axios.create({
 
 protectedApi.interceptors.request.use(async (req) => {
   try {
+    accessToken = localStorage.getItem("accessToken");
+    req.headers.Authorization = `Bearer ${accessToken}`;
     if (!accessToken) {
-      accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        return;
-      }
-      req.headers.Authorization = `Bearer ${accessToken}`;
+      return;
     }
     const user = jwt_decode(accessToken);
     const isAccessTokenExpired = dayjs.unix(user?.exp).diff(dayjs()) < 1;
     console.log("Access token expired: ", isAccessTokenExpired);
     try {
       if (!isAccessTokenExpired) return req;
-      
+
       refreshToken = localStorage.getItem("refreshToken");
       const user = jwt_decode(refreshToken);
       const isRefreshTokenExpired = dayjs.unix(user?.exp).diff(dayjs()) < 1;

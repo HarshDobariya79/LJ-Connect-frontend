@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
     }
     const timer = setInterval(() => {
-      console.log('timer running');
+      // console.log('timer running');
       const refreshToken = localStorage.getItem("refreshToken");
       if (!refreshToken && isLoggedIn) {
         setIsLoggedIn(false);
