@@ -248,7 +248,9 @@ const Staff = () => {
                       {staff.email}
                     </td>
                     <td className="px-6 py-4">
-                      {`${staff?.first_name} ${staff?.middle_name || ""} ${staff?.last_name}`}
+                      {`${staff?.first_name} ${staff?.middle_name || ""} ${
+                        staff?.last_name
+                      }`}
                     </td>
                     <td className="px-6 py-4">{staff.category}</td>
                     <td className="px-6 py-4">{staff.mobile_number}</td>
@@ -425,7 +427,7 @@ const Staff = () => {
                       {...(payload?.gender === "M" ? { checked: true } : null)}
                     />
                     <label
-                      for="gender"
+                      htmlFor="gender"
                       class="ml-2 text-sm font-medium text-gray-900"
                     >
                       Male
@@ -440,7 +442,7 @@ const Staff = () => {
                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
                     <label
-                      for="gender"
+                      htmlFor="gender"
                       class="ml-2 text-sm font-medium text-gray-900 "
                     >
                       Female
@@ -455,7 +457,7 @@ const Staff = () => {
                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
                     <label
-                      for="gender"
+                      htmlFor="gender"
                       class="ml-2 text-sm font-medium text-gray-900 "
                     >
                       Other
@@ -477,7 +479,7 @@ const Staff = () => {
                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
                     <label
-                      for="category"
+                      htmlFor="category"
                       class="ml-2 text-sm font-medium text-gray-900"
                     >
                       Teaching
@@ -492,7 +494,7 @@ const Staff = () => {
                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
                     <label
-                      for="category"
+                      htmlFor="category"
                       class="ml-2 text-sm font-medium text-gray-900 "
                     >
                       Non-teaching
@@ -511,7 +513,7 @@ const Staff = () => {
                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                 />
                 <label
-                  for="active"
+                  htmlFor="active"
                   class="ml-2 text-sm font-medium text-gray-900"
                 >
                   Active
@@ -528,7 +530,7 @@ const Staff = () => {
                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                 />
                 <label
-                  for="admin"
+                  htmlFor="admin"
                   class="ml-2 text-sm font-medium text-gray-900"
                 >
                   Admin
