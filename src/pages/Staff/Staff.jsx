@@ -27,6 +27,8 @@ const Staff = () => {
             setDataStatus("No data available");
           }
           setStaffDetails(response?.data);
+          setMode(undefined);
+          setMessage(undefined);
         }
       })
       .catch((error) => {
@@ -52,6 +54,7 @@ const Staff = () => {
   const resetStates = () => {
     setMode(undefined);
     setPayload(undefined);
+    setMessage(undefined);
   };
 
   const sendEditPayload = () => {
@@ -62,10 +65,7 @@ const Staff = () => {
         if (response?.status === 200) {
           console.log("Object created", response?.payload?.data);
           updateStaffList();
-          setMessage("Updated");
-          setTimeout(() => {
-            setMessage(undefined);
-          }, 2000);
+          // setMessage("Updated");
         }
       })
       .catch((error) => {
@@ -85,10 +85,7 @@ const Staff = () => {
         if (response?.status === 201) {
           console.log("Object created", response?.payload?.data);
           updateStaffList();
-          setMessage("Saved");
-          setTimeout(() => {
-            setMessage(undefined);
-          }, 2000);
+          // setMessage("Saved");
         }
       })
       .catch((error) => {
