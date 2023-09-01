@@ -25,6 +25,11 @@ const Sidebar = (props) => {
       title: "Staff",
       path: "/staff",
     },
+    {
+      role: ["admin"],
+      title: "Branch",
+      path: "/branch",
+    },
   ];
 
   const applyConfig = config.filter((obj) => obj?.role.includes(role));

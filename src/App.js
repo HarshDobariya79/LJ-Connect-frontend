@@ -13,6 +13,7 @@ import { AuthProvider } from "./hooks/useAuth";
 import Auth from "./pages/Auth/Auth";
 import { useAuth } from "./hooks/useAuth";
 import Staff from "./pages/Staff/Staff";
+import Branch from "./pages/Branch/Branch";
 
 const App = () => {
   const { isLoggedIn } = useAuth();
@@ -27,6 +28,9 @@ const App = () => {
         </Route>
         <Route path="/staff" element={<Dashboard />}>
           <Route path="" element={<Staff />} />  
+        </Route>
+        <Route path="/branch" element={<Dashboard />}>
+          <Route path="" element={<Branch />} />  
         </Route>
       </Route>
       <Route path="/" element={<Auth />} exact />
