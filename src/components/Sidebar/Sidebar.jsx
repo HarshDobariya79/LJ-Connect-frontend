@@ -30,6 +30,11 @@ const Sidebar = (props) => {
       title: "Branch",
       path: "/branch",
     },
+    {
+      role: ["admin", "hod"],
+      title: "Faculty Allocation",
+      path: "/faculty-allocation",
+    },
   ];
 
   const applyConfig = config.filter((obj) => obj?.role.includes(role));

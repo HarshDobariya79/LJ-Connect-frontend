@@ -144,6 +144,7 @@ const Staff = () => {
               setMode("new");
             }}
             className="p-1 px-2 bg-sky-600 hover:bg-oceanic-blue text-white rounded"
+            {...(mode ? { disabled: true } : "")}
           >
             Add staff
           </button>
@@ -163,6 +164,7 @@ const Staff = () => {
                         data.sort((a, b) => a.email.localeCompare(b.email));
                         setStaffDetails(data);
                       }}
+                      {...(mode ? { disabled: true } : "")}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -188,6 +190,7 @@ const Staff = () => {
                         );
                         setStaffDetails(data);
                       }}
+                      {...(mode ? { disabled: true } : "")}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -213,6 +216,7 @@ const Staff = () => {
                         );
                         setStaffDetails(data);
                       }}
+                      {...(mode ? { disabled: true } : "")}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -258,6 +262,7 @@ const Staff = () => {
                           setMode("edit");
                         }}
                         className="font-medium text-blue-600 px-1 hover:underline"
+                        {...(mode ? { disabled: true } : "")}
                       >
                         Edit
                       </button>
@@ -413,19 +418,19 @@ const Staff = () => {
                   <label className="block mb-2 text-sm font-medium text-gray-900 ">
                     Gender
                   </label>
-                  <div class="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2">
                     <input
                       id="male"
                       type="radio"
                       value="M"
                       name="gender"
-                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                       onChange={handlePayloadUpdate}
                       {...(payload?.gender === "M" ? { checked: true } : null)}
                     />
                     <label
                       htmlFor="gender"
-                      class="ml-2 text-sm font-medium text-gray-900"
+                      className="ml-2 text-sm font-medium text-gray-900"
                     >
                       Male
                     </label>
@@ -436,11 +441,11 @@ const Staff = () => {
                       name="gender"
                       checked={payload?.gender === "F"}
                       onChange={handlePayloadUpdate}
-                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
                     <label
                       htmlFor="gender"
-                      class="ml-2 text-sm font-medium text-gray-900 "
+                      className="ml-2 text-sm font-medium text-gray-900 "
                     >
                       Female
                     </label>
@@ -451,11 +456,11 @@ const Staff = () => {
                       name="gender"
                       checked={payload?.gender === "O"}
                       onChange={handlePayloadUpdate}
-                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
                     <label
                       htmlFor="gender"
-                      class="ml-2 text-sm font-medium text-gray-900 "
+                      className="ml-2 text-sm font-medium text-gray-900 "
                     >
                       Other
                     </label>
@@ -465,7 +470,7 @@ const Staff = () => {
                   <label className="block mb-2 text-sm font-medium text-gray-900 ">
                     Category
                   </label>
-                  <div class="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2">
                     <input
                       id="teaching"
                       type="radio"
@@ -473,11 +478,11 @@ const Staff = () => {
                       name="category"
                       onChange={handlePayloadUpdate}
                       checked={payload?.category === "T"}
-                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
                     <label
                       htmlFor="category"
-                      class="ml-2 text-sm font-medium text-gray-900"
+                      className="ml-2 text-sm font-medium text-gray-900"
                     >
                       Teaching
                     </label>
@@ -488,18 +493,18 @@ const Staff = () => {
                       name="category"
                       onChange={handlePayloadUpdate}
                       checked={payload?.category === "NT"}
-                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
                     <label
                       htmlFor="category"
-                      class="ml-2 text-sm font-medium text-gray-900 "
+                      className="ml-2 text-sm font-medium text-gray-900 "
                     >
                       Non-teaching
                     </label>
                   </div>
                 </div>
               </div>
-              <div class="flex items-center space-x-2 mb-2">
+              <div className="flex items-center space-x-2 mb-2">
                 <input
                   id="active"
                   type="checkbox"
@@ -507,16 +512,16 @@ const Staff = () => {
                   name="active"
                   onChange={handlePayloadUpdate}
                   {...(payload?.active === true ? { checked: true } : null)}
-                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                 />
                 <label
                   htmlFor="active"
-                  class="ml-2 text-sm font-medium text-gray-900"
+                  className="ml-2 text-sm font-medium text-gray-900"
                 >
                   Active
                 </label>
               </div>
-              <div class="flex items-center space-x-2 mb-4">
+              <div className="flex items-center space-x-2 mb-4">
                 <input
                   id="admin"
                   type="checkbox"
@@ -524,11 +529,11 @@ const Staff = () => {
                   name="admin"
                   onChange={handlePayloadUpdate}
                   {...(payload?.admin === true ? { checked: true } : null)}
-                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                 />
                 <label
                   htmlFor="admin"
-                  class="ml-2 text-sm font-medium text-gray-900"
+                  className="ml-2 text-sm font-medium text-gray-900"
                 >
                   Admin
                 </label>

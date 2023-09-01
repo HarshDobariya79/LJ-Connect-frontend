@@ -14,6 +14,7 @@ import Auth from "./pages/Auth/Auth";
 import { useAuth } from "./hooks/useAuth";
 import Staff from "./pages/Staff/Staff";
 import Branch from "./pages/Branch/Branch";
+import FacultyAllocation from "./pages/FacultyAllocation/FacultyAllocation";
 
 const App = () => {
   const { isLoggedIn } = useAuth();
@@ -31,6 +32,9 @@ const App = () => {
         </Route>
         <Route path="/branch" element={<Dashboard />}>
           <Route path="" element={<Branch />} />  
+        </Route>
+        <Route path="/faculty-allocation" element={<Dashboard />}>
+          <Route path="" element={<FacultyAllocation />} />  
         </Route>
       </Route>
       <Route path="/" element={<Auth />} exact />

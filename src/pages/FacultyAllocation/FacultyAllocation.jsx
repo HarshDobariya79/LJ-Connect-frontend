@@ -1,12 +1,42 @@
 import { useEffect, useState } from "react";
 import { protectedApi } from "../../services/api";
 
-const Branch = () => {
-  const [branchData, setBranchData] = useState();
+const FacultyAllocation = () => {
+  const [facultyAllocationData, setFacultyAllocationData] = useState();
   const [dataStatus, setDataStatus] = useState("Loading...");
   const [mode, setMode] = useState();
   const [payload, setPayload] = useState({});
   const [message, setMessage] = useState();
+  const [subjects, setSubjects] = useState();
+  const [faculties, setFaculties] = useState();
+
+  useEffect(() => {
+    if (["new", "edit"].includes(mode)) {
+      protectedApi
+        .get("/api/v1/subject/")
+        .then((response) => {
+          setSubjects(response?.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Subject fetch error: " + error);
+        });
+    }
+  }, [mode]);
+
+  useEffect(() => {
+    if (["new", "edit"].includes(mode)) {
+      protectedApi
+        .get("/api/v1/staff/compact/")
+        .then((response) => {
+          setFaculties(response?.data);
+          console.log(response?.data);
+        })
+        .catch((error) => {
+          console.error("Staff detail fetch error: " + error);
+        });
+    }
+  }, [mode]);
 
   useEffect(() => {
     console.log(payload);
@@ -16,29 +46,29 @@ const Branch = () => {
     console.log(mode);
   }, [mode]);
 
-  const fetchBranchData = () => {
+  const fetFacultyAllocationData = () => {
     protectedApi
-      .get("/api/v1/branch/")
+      .get("/api/v1/faculty-allocation/")
       .then((response) => {
         if (response?.status === 200) {
           console.log(response.data);
           if (response?.data?.length == 0) {
             setDataStatus("No data available");
           }
-          setBranchData(response?.data);
+          setFacultyAllocationData(response?.data);
           setMode(undefined);
           setMessage(undefined);
         }
       })
       .catch((error) => {
         setDataStatus("Something went wrong");
-        console.error("Fetch branch data failed: ", error);
+        console.error("Fetch faculty allocation data failed: ", error);
         // logout();
       });
   };
 
   useEffect(() => {
-    fetchBranchData();
+    fetFacultyAllocationData();
   }, []);
 
   const handlePayloadUpdate = (event) => {
@@ -59,11 +89,14 @@ const Branch = () => {
   const sendEditPayload = () => {
     setMessage("Updating...");
     protectedApi
-      .put("/api/v1/branch/", payload)
+      .put("/api/v1/faculty-allocation/", payload)
       .then((response) => {
         if (response?.status === 200) {
-          console.log("Branch object created", response?.payload?.data);
-          fetchBranchData();
+          console.log(
+            "Faculty allocation object created",
+            response?.payload?.data
+          );
+          fetFacultyAllocationData();
           //   setMessage("Updated");
         }
       })
@@ -72,18 +105,18 @@ const Branch = () => {
         setTimeout(() => {
           setMessage(undefined);
         }, 2000);
-        console.error("Branch update request failed: ", error);
+        console.error("Faculty allocation update request failed: ", error);
       });
   };
 
   const sendNewPayload = () => {
     setMessage("Saving...");
     protectedApi
-      .post("/api/v1/branch/", payload)
+      .post("/api/v1/faculty-allocation/", payload)
       .then((response) => {
         if (response?.status === 201) {
           console.log("Object created", response?.payload?.data);
-          fetchBranchData();
+          fetFacultyAllocationData();
           //   setMessage("Saved");
         }
       })
@@ -92,7 +125,7 @@ const Branch = () => {
         setTimeout(() => {
           setMessage(undefined);
         }, 2000);
-        console.error("New branch creation request failed: ", error);
+        console.error("New faculty allocation request failed: ", error);
       });
   };
 
@@ -113,22 +146,23 @@ const Branch = () => {
   return (
     <>
       <div className="flex flex-col items-center max-h-screen p-8">
-        <div className="text-2xl text-gray-700 font-medium">Manage Branch</div>
+        <div className="text-2xl text-gray-700 font-medium">
+          Manage Faculty Allocation
+        </div>
         <div className="flex w-11/12 m-3 ml-5">
           <button
             onClick={() => {
               setPayload({
-                branch_code: "",
-                branch_short_name: "",
-                branch_full_name: "",
-                available: true,
+                id: null,
+                faculty: "",
+                subject: "",
               });
               setMode("new");
             }}
             className="p-1 px-2 bg-sky-600 hover:bg-oceanic-blue text-white rounded"
             {...(mode ? { disabled: true } : "")}
           >
-            Add branch
+            New allocation
           </button>
         </div>
 
@@ -138,15 +172,17 @@ const Branch = () => {
               <tr>
                 <th scope="col" className="py-3 w-auto">
                   <div className="flex items-center justify-center">
-                    Code
+                    Faculty Name
                     <button
                       onClick={() => {
                         console.log("sorting");
-                        let data = [...branchData];
+                        let data = [...facultyAllocationData];
                         data.sort((a, b) =>
-                          a.branch_code.localeCompare(b.branch_code)
+                          a.faculty_first_name.localeCompare(
+                            b.faculty_first_name
+                          )
                         );
-                        setBranchData(data);
+                        setFacultyAllocationData(data);
                       }}
                       {...(mode ? { disabled: true } : "")}
                     >
@@ -164,15 +200,17 @@ const Branch = () => {
                 </th>
                 <th scope="col" className="py-3 w-auto">
                   <div className="flex items-center justify-center">
-                    Name
+                    Faculty short name
                     <button
                       onClick={() => {
                         console.log("sorting");
-                        let data = [...branchData];
+                        let data = [...facultyAllocationData];
                         data.sort((a, b) =>
-                          a.branch_short_name.localeCompare(b.branch_short_name)
+                          a.faculty_short_name.localeCompare(
+                            b.faculty_short_name
+                          )
                         );
-                        setBranchData(data);
+                        setFacultyAllocationData(data);
                       }}
                       {...(mode ? { disabled: true } : "")}
                     >
@@ -190,15 +228,13 @@ const Branch = () => {
                 </th>
                 <th scope="col" className="py-3">
                   <div className="flex items-center justify-center">
-                    Full Name
+                    Subject code
                     <button
                       onClick={() => {
                         console.log("sorting");
-                        let data = [...branchData];
-                        data.sort((a, b) =>
-                          a.branch_full_name.localeCompare(b.branch_full_name)
-                        );
-                        setBranchData(data);
+                        let data = [...facultyAllocationData];
+                        data.sort((a, b) => a.subject.localeCompare(b.subject));
+                        setFacultyAllocationData(data);
                       }}
                       {...(mode ? { disabled: true } : "")}
                     >
@@ -216,13 +252,17 @@ const Branch = () => {
                 </th>
                 <th scope="col" className="py-3">
                   <div className="flex items-center justify-center">
-                    Available
+                    Subject short name
                     <button
                       onClick={() => {
                         console.log("sorting");
-                        let data = [...branchData];
-                        data.sort((a, b) => b.available - a.available);
-                        setBranchData(data);
+                        let data = [...facultyAllocationData];
+                        data.sort((a, b) =>
+                          a.subject_short_name.localeCompare(
+                            b.subject_short_name
+                          )
+                        );
+                        setFacultyAllocationData(data);
                       }}
                       {...(mode ? { disabled: true } : "")}
                     >
@@ -244,28 +284,30 @@ const Branch = () => {
               </tr>
             </thead>
             <tbody>
-              {branchData && branchData?.length > 0 ? (
-                branchData.map((branch) => (
+              {facultyAllocationData && facultyAllocationData?.length > 0 ? (
+                facultyAllocationData.map((allocation) => (
                   <tr className="bg-white border-b  ">
                     <td
                       scope="row"
                       className="px-6 py-4 font-medium whitespace-nowrap"
                     >
-                      {branch?.branch_code}
+                      {`${allocation?.faculty_first_name} ${
+                        allocation?.faculty_middle_name || ""
+                      } ${allocation?.faculty_last_name}`}
                     </td>
-                    <td className="px-6 py-4">{branch?.branch_short_name}</td>
-                    <td className="px-6 py-4">{branch?.branch_full_name}</td>
                     <td className="px-6 py-4">
-                      {branch?.available ? (
-                        <span className="text-green-600">Yes</span>
-                      ) : (
-                        <span className="text-red-600">No</span>
-                      )}
+                      {allocation?.faculty_short_name}
+                    </td>
+                    <td className="px-6 py-4">{allocation?.subject}</td>
+                    <td className="px-6 py-4">
+                      {allocation?.subject_short_name}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => {
-                          setPayload(branch);
+                          const data = { ...allocation };
+                          data.id = allocation?.id;
+                          setPayload(data);
                           setMode("edit");
                         }}
                         className="font-medium text-blue-600 px-1 hover:underline"
@@ -274,12 +316,12 @@ const Branch = () => {
                         Edit
                       </button>
                       {/* <button onClick={() => {
-                        setPayload(branch);
-                        setMode("delete");
-                        sendPayload();
-                      }} className="font-medium text-red-600 px-1  hover:underline">
-                        Remove
-                      </button> */}
+                            setPayload(allocation);
+                            setMode("delete");
+                            sendPayload();
+                          }} className="font-medium text-red-600 px-1  hover:underline">
+                            Remove
+                          </button> */}
                     </td>
                   </tr>
                 ))
@@ -298,77 +340,66 @@ const Branch = () => {
         <div className="flex flex-col items-center justify-center bg-black bg-opacity-20 w-full h-full absolute top-0 left-0">
           <div className="flex flex-col justify-start w-1/2 max-h-11/12 bg-white rounded-xl">
             <div className="h-16 bg-gray-100 w-full rounded-xl flex justify-center items-center font-bold text-gray-600">
-              {mode === "new" ? "New" : "Edit"} Branch
+              {mode === "new" ? "New" : "Edit"} Allocation
             </div>
             <div className="p-9 overflow-x-auto">
-              <div className="grid gap-6 mb-6 md:grid-cols-2">
-                <div>
-                  <label
-                    htmlFor="branch_code"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
-                    Branch code
-                  </label>
-                  <input
-                    type="text"
-                    id="branch_code"
-                    name="branch_code"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    value={payload?.branch_code}
-                    onChange={handlePayloadUpdate}
-                    {...(mode === "edit" ? { readOnly: true } : {})}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="branch_short_name"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
-                    Short name
-                  </label>
-                  <input
-                    type="text"
-                    id="branch_short_name"
-                    name="branch_short_name"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    value={payload?.branch_short_name}
-                    onChange={handlePayloadUpdate}
-                    required
-                  />
-                </div>
+              <div className="mb-6">
+                <label
+                  htmlFor="faculty"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Faculty
+                </label>
+                <select
+                  name="faculty"
+                  value={payload?.faculty || "Choose a faculty"}
+                  onChange={handlePayloadUpdate}
+                  id="faculty"
+                  className="bg-gray-50 border-gray-300 border-2 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  required
+                >
+                  <option selected disabled hidden>
+                    Choose a faculty
+                  </option>
+                  {faculties
+                    ? faculties.map((faculty) => (
+                        <option name="faculty" value={faculty.email}>{`${
+                          faculty.first_name
+                        } ${faculty.middle_name || ""} ${faculty.last_name} (${
+                          faculty.email
+                        })`}</option>
+                      ))
+                    : ""}
+                </select>
               </div>
               <div className="mb-6">
                 <label
-                  htmlFor="branch_full_name"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
+                  htmlFor="subject"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
-                  Full name
+                  Subject
                 </label>
-                <input
-                  type="text"
-                  id="branch_full_name"
-                  name="branch_full_name"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5      "
-                  value={payload?.branch_full_name}
+                <select
+                  name="subject"
+                  value={payload?.subject || "Choose a subject"}
                   onChange={handlePayloadUpdate}
-                />
-              </div>
-              <div className="flex items-center space-x-2 mb-4">
-                <input
-                  id="available"
-                  type="checkbox"
-                  value={true}
-                  name="available"
-                  onChange={handlePayloadUpdate}
-                  {...(payload?.available === true ? { checked: true } : null)}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
-                />
-                <label
-                  htmlFor="available"
-                  className="ml-2 text-sm font-medium text-gray-900"
+                  id="subject"
+                  className="bg-gray-50 border-gray-300 border-2 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  required
                 >
-                  Available
-                </label>
+                  <option selected disabled hidden>
+                    Choose a subject
+                  </option>
+                  {subjects
+                    ? subjects.map((subject) => (
+                        <option
+                          name="subject"
+                          onSelect={handlePayloadUpdate}
+                          value={subject.subject_code}
+                        >{`${subject.subject_code} - ${subject.subject_short_name}`}</option>
+                      ))
+                    : ""}
+                </select>
               </div>
               <div className="flex justify-start space-x-3">
                 <button
@@ -395,4 +426,4 @@ const Branch = () => {
   );
 };
 
-export default Branch;
+export default FacultyAllocation;
