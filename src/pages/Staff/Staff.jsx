@@ -18,6 +18,11 @@ const Staff = () => {
   }, [mode]);
 
   const updateStaffList = () => {
+    const sessionStaffList = sessionStorage.getItem("staffList");
+    console.log(sessionStaffList);
+    if (sessionStaffList) {
+      setStaffDetails(JSON.parse(sessionStaffList));
+    }
     protectedApi
       .get("/api/v1/staff/")
       .then((response) => {
@@ -29,9 +34,12 @@ const Staff = () => {
           setStaffDetails(response?.data);
           setMode(undefined);
           setMessage(undefined);
+          sessionStorage.setItem("staffList", JSON.stringify(response?.data));
         }
       })
       .catch((error) => {
+        setStaffDetails(undefined);
+        sessionStorage.removeItem("staffList");
         setDataStatus("Something went wrong");
         console.error("Fetch staff details failed: ", error);
         // logout();

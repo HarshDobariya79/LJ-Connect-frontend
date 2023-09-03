@@ -17,6 +17,11 @@ const Branch = () => {
   }, [mode]);
 
   const fetchBranchData = () => {
+    const sessionBranchData = sessionStorage.getItem("branchData");
+    console.log(sessionBranchData);
+    if (sessionBranchData) {
+      setBranchData(JSON.parse(sessionBranchData));
+    }
     protectedApi
       .get("/api/v1/branch/")
       .then((response) => {
@@ -28,9 +33,12 @@ const Branch = () => {
           setBranchData(response?.data);
           setMode(undefined);
           setMessage(undefined);
+          sessionStorage.setItem("branchData", JSON.stringify(response?.data));
         }
       })
       .catch((error) => {
+        setBranchData(undefined);
+        sessionStorage.removeItem("branchData");
         setDataStatus("Something went wrong");
         console.error("Fetch branch data failed: ", error);
         // logout();
