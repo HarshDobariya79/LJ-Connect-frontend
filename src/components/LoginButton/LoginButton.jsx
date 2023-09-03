@@ -1,5 +1,5 @@
-import React from "react";
-import googleIcon from "../../assets/images/LoginPage/google.png";
+import React from 'react';
+import googleIcon from '../../assets/images/LoginPage/google.png';
 
 const handleLoginClick = () => {
   const { REDIRECT_URI, CLIENT_ID, ACCESS_TYPE } = process.env;
@@ -7,20 +7,16 @@ const handleLoginClick = () => {
   window.location.href = googleAuthUrl;
 };
 
-const LoginButton = ({ text }) => {
+function LoginButton({ text }) {
   return (
     <button
       onClick={handleLoginClick}
       className="bg-[#EBEBEB] hover:bg-[#CECECE] text-[#494949] font-bold xl:py-2 lg:py-1 px-4 rounded w-2/3 mb-7 flex justify-start items-center"
     >
-      <img
-        src={googleIcon}
-        alt="Google Icon"
-        className="relative left-0 w-2 xl:w-5 lg:w-3 inline"
-      />
+      <img src={googleIcon} alt="Google Icon" className="relative left-0 w-2 xl:w-5 lg:w-3 inline" />
       <span className="flex-1 text-center mr-5 font-[500]">{text}</span>
     </button>
   );
-};
+}
 
 export default LoginButton;

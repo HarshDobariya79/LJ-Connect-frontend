@@ -1,7 +1,7 @@
-import axios from "axios";
-import jwt_decode from "jwt-decode";
-import dayjs from "dayjs";
-import logout from "../utils/logout";
+import axios from 'axios';
+import jwtDecode from 'jwt-decode';
+import dayjs from 'dayjs';
+import logout from '../utils/logout';
 
 const baseURL = process.env.BACKEND_BASE_URL;
 
@@ -12,8 +12,8 @@ const api = axios.create({
 
 export default api;
 
-let accessToken = localStorage.getItem("accessToken");
-let refreshToken = localStorage.getItem("refreshToken");
+let accessToken = localStorage.getItem('accessToken');
+let refreshToken = localStorage.getItem('refreshToken');
 
 const protectedApi = axios.create({
   baseURL,
@@ -25,41 +25,42 @@ const protectedApi = axios.create({
 
 protectedApi.interceptors.request.use(async (req) => {
   try {
-    accessToken = localStorage.getItem("accessToken");
+    accessToken = localStorage.getItem('accessToken');
     req.headers.Authorization = `Bearer ${accessToken}`;
     if (!accessToken) {
       return;
     }
-    const user = jwt_decode(accessToken);
+    const user = jwtDecode(accessToken);
     const isAccessTokenExpired = dayjs.unix(user?.exp).diff(dayjs()) < 1;
-    console.log("Access token expired: ", isAccessTokenExpired);
+    console.log('Access token expired: ', isAccessTokenExpired);
     try {
+      // eslint-disable-next-line
       if (!isAccessTokenExpired) return req;
 
-      refreshToken = localStorage.getItem("refreshToken");
-      const user = jwt_decode(refreshToken);
-      const isRefreshTokenExpired = dayjs.unix(user?.exp).diff(dayjs()) < 1;
-      console.log("Refresh token expired: ", isRefreshTokenExpired);
+      refreshToken = localStorage.getItem('refreshToken');
+      const decodedRefreshToken = jwtDecode(refreshToken);
+      const isRefreshTokenExpired = dayjs.unix(decodedRefreshToken?.exp).diff(dayjs()) < 1;
+      console.log('Refresh token expired: ', isRefreshTokenExpired);
 
       if (isRefreshTokenExpired) {
         logout();
       }
 
-      var response = await api.post(`/auth/v1/refresh-token/`, {
+      const response = await api.post(`/auth/v1/refresh-token/`, {
         refresh: refreshToken?.toString(),
       });
+
+      if (response?.status === 200) {
+        accessToken = response?.data?.access;
+        localStorage.setItem('accessToken', accessToken);
+        req.headers.Authorization = `Bearer ${accessToken}`; // eslint-disable-next-line
+        return req;
+      }
     } catch (err) {
       logout();
     }
-
-    if (response?.status === 200) {
-      accessToken = response?.data?.access;
-      localStorage.setItem("accessToken", accessToken);
-      req.headers.Authorization = `Bearer ${accessToken}`;
-      return req;
-    }
   } catch (err) {
-    console.log("protectedApi: ", err);
+    console.log('protectedApi: ', err);
   }
 });
 

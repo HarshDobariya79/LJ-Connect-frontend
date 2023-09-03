@@ -21,7 +21,10 @@
   },
   "homepage": "https://github.com/HarshDobariya79/LJ-Connect-frontend#readme",
   "devDependencies": {
-    "@babel/core": "^7.22.10",
+    "@babel/core": "^7.22.11",
+    "@babel/eslint-parser": "^7.22.11",
+    "@babel/plugin-transform-optional-chaining": "^7.22.12",
+    "@babel/preset-react": "^7.22.5",
     "@parcel/babel-preset-env": "^2.9.3",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "buffer": "^6.0.3",
@@ -44,6 +47,7 @@
     "axios": "^1.4.0",
     "dayjs": "^1.11.9",
     "jwt-decode": "^3.1.2",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0"

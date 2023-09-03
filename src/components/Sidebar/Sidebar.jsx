@@ -1,39 +1,39 @@
-import Logo from "../../assets/images/logo.png";
-import SidebarTile from "./SidebarTile";
-import { useState } from "react";
-import logout from "../../utils/logout";
+import React from 'react';
+import Logo from '../../assets/images/logo.png';
+import SidebarTile from './SidebarTile';
+import logout from '../../utils/logout';
 
 function toTitleCase(str) {
-  if (!str) return "";
+  if (!str) return '';
   return str
     .toLowerCase()
-    .split(" ")
+    .split(' ')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+    .join(' ');
 }
 
-const Sidebar = (props) => {
+function Sidebar(props) {
   const role = props?.role;
   const config = [
     {
-      role: ["admin", "hod", "staff", "student", "guest"],
-      title: "Dashboard",
-      path: "/dashboard",
+      role: ['admin', 'hod', 'staff', 'student', 'guest'],
+      title: 'Dashboard',
+      path: '/dashboard',
     },
     {
-      role: ["admin"],
-      title: "Staff",
-      path: "/staff",
+      role: ['admin'],
+      title: 'Staff',
+      path: '/staff',
     },
     {
-      role: ["admin"],
-      title: "Branch",
-      path: "/branch",
+      role: ['admin'],
+      title: 'Branch',
+      path: '/branch',
     },
     {
-      role: ["admin", "hod"],
-      title: "Faculty Allocation",
-      path: "/faculty-allocation",
+      role: ['admin', 'hod'],
+      title: 'Faculty Allocation',
+      path: '/faculty-allocation',
     },
   ];
 
@@ -53,36 +53,27 @@ const Sidebar = (props) => {
       <div className="flex flex-col p-4 space-y-2">
         <div className="flex justify-start space-x-5 items-center p-1">
           {props?.profilePhoto ? (
-            <img
-              src={props?.profilePhoto}
-              alt="user profile photo"
-              className="w-1/4 rounded-full"
-            />
+            <img src={props?.profilePhoto} alt="user profile" className="w-1/4 rounded-full" />
           ) : (
-            <div className="w-1/4 bg-gray-100 aspect-square rounded-full animate-pulse"></div>
+            <div className="w-1/4 bg-gray-100 aspect-square rounded-full animate-pulse" />
           )}
 
           {console.log(props?.name)}
           {props?.name ? (
-            <>
-              <div className="flex flex-col justify-start">
-                <div className="font-bold">{props?.name}</div>
-                <div className="">{toTitleCase(props?.role)}</div>
-              </div>
-            </>
+            <div className="flex flex-col justify-start">
+              <div className="font-bold">{props?.name}</div>
+              <div className="">{toTitleCase(props?.role)}</div>
+            </div>
           ) : (
-            <div className="w-3/4 h-4/5 bg-gray-100 rounded animate-pulse"></div>
+            <div className="w-3/4 h-4/5 bg-gray-100 rounded animate-pulse" />
           )}
         </div>
-        <button
-          onClick={logout}
-          className="bg-gray-500 hover:bg-gray-600 rounded-lg w-full mx-auto p-1 text-white"
-        >
+        <button onClick={logout} className="bg-gray-500 hover:bg-gray-600 rounded-lg w-full mx-auto p-1 text-white">
           Logout
         </button>
       </div>
     </div>
   );
-};
+}
 
 export default Sidebar;

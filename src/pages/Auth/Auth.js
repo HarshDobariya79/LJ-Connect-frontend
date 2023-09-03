@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { useAuth } from "../../hooks/useAuth";
-import api from "../../services/api";
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '../../hooks/useAuth';
+import api from '../../services/api';
 
 const Auth = () => {
   const { setIsLoggedIn } = useAuth();
@@ -9,28 +9,28 @@ const Auth = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get("code");
+    const code = urlParams.get('code');
 
     if (code) {
-      const response = api
+      api
         .post(process.env.GOOGLE_LOGIN_V1, {
           code,
         })
         .then((response) => {
           if (response?.status === 200) {
             const { access, refresh } = response.data;
-            localStorage.setItem("accessToken", access);
-            localStorage.setItem("refreshToken", refresh);
+            localStorage.setItem('accessToken', access);
+            localStorage.setItem('refreshToken', refresh);
             setIsLoggedIn(true);
-            navigate("/dashboard");
+            navigate('/dashboard');
           }
         })
         .catch((error) => {
-          console.log("Login request failed: " + error);
-          navigate("/login");
+          console.error(`Login request failed: ${error}`);
+          navigate('/login');
         });
     } else {
-      navigate("/dashboard");
+      navigate('/dashboard');
     }
   }, []);
 };

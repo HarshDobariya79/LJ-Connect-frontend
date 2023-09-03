@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { protectedApi } from "../../services/api";
+import React, { useEffect, useState } from 'react';
+import { protectedApi } from '../../services/api';
 
-const FacultyAllocation = () => {
+function FacultyAllocation() {
   const [facultyAllocationData, setFacultyAllocationData] = useState();
-  const [dataStatus, setDataStatus] = useState("Loading...");
+  const [dataStatus, setDataStatus] = useState('Loading...');
   const [mode, setMode] = useState();
   const [payload, setPayload] = useState({});
   const [message, setMessage] = useState();
@@ -11,29 +11,29 @@ const FacultyAllocation = () => {
   const [faculties, setFaculties] = useState();
 
   useEffect(() => {
-    if (["new", "edit"].includes(mode)) {
+    if (['new', 'edit'].includes(mode)) {
       protectedApi
-        .get("/api/v1/subject/")
+        .get('/api/v1/subject/')
         .then((response) => {
           setSubjects(response?.data);
           console.log(response.data);
         })
         .catch((error) => {
-          console.error("Subject fetch error: " + error);
+          console.error(`Subject fetch error: ${error}`);
         });
     }
   }, [mode]);
 
   useEffect(() => {
-    if (["new", "edit"].includes(mode)) {
+    if (['new', 'edit'].includes(mode)) {
       protectedApi
-        .get("/api/v1/staff/compact/")
+        .get('/api/v1/staff/compact/')
         .then((response) => {
           setFaculties(response?.data);
           console.log(response?.data);
         })
         .catch((error) => {
-          console.error("Staff detail fetch error: " + error);
+          console.error(`Staff detail fetch error: ${error}`);
         });
     }
   }, [mode]);
@@ -47,34 +47,29 @@ const FacultyAllocation = () => {
   }, [mode]);
 
   const fetFacultyAllocationData = () => {
-    const sessionFacultyAllocationData = sessionStorage.getItem(
-      "facultyAllocationData"
-    );
+    const sessionFacultyAllocationData = sessionStorage.getItem('facultyAllocationData');
     if (sessionFacultyAllocationData) {
       setFacultyAllocationData(JSON.parse(sessionFacultyAllocationData));
     }
     protectedApi
-      .get("/api/v1/faculty-allocation/")
+      .get('/api/v1/faculty-allocation/')
       .then((response) => {
         if (response?.status === 200) {
           console.log(response.data);
-          if (response?.data?.length == 0) {
-            setDataStatus("No data available");
+          if (response?.data?.length === 0) {
+            setDataStatus('No data available');
           }
           setFacultyAllocationData(response?.data);
           setMode(undefined);
           setMessage(undefined);
-          sessionStorage.setItem(
-            "facultyAllocationData",
-            JSON.stringify(response?.data)
-          );
+          sessionStorage.setItem('facultyAllocationData', JSON.stringify(response?.data));
         }
       })
       .catch((error) => {
         setFacultyAllocationData(undefined);
-        sessionStorage.removeItem("facultyAllocationData");
-        setDataStatus("Something went wrong");
-        console.error("Fetch faculty allocation data failed: ", error);
+        sessionStorage.removeItem('facultyAllocationData');
+        setDataStatus('Something went wrong');
+        console.error('Fetch faculty allocation data failed: ', error);
         // logout();
       });
   };
@@ -84,11 +79,8 @@ const FacultyAllocation = () => {
   }, []);
 
   const handlePayloadUpdate = (event) => {
-    const name = event.target.name;
-    const value =
-      event.target.type === "checkbox"
-        ? event.target.checked
-        : event.target.value;
+    const { name } = event.target;
+    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
     setPayload({ ...payload, [name]: value });
   };
 
@@ -99,80 +91,77 @@ const FacultyAllocation = () => {
   };
 
   const sendEditPayload = () => {
-    setMessage("Updating...");
+    setMessage('Updating...');
     protectedApi
-      .put("/api/v1/faculty-allocation/", payload)
+      .put('/api/v1/faculty-allocation/', payload)
       .then((response) => {
         if (response?.status === 200) {
-          console.log(
-            "Faculty allocation object created",
-            response?.payload?.data
-          );
+          console.log('Faculty allocation object created', response?.payload?.data);
           fetFacultyAllocationData();
           //   setMessage("Updated");
         }
       })
       .catch((error) => {
-        setMessage("Failed");
+        setMessage('Failed');
         setTimeout(() => {
           setMessage(undefined);
         }, 2000);
-        console.error("Faculty allocation update request failed: ", error);
+        console.error('Faculty allocation update request failed: ', error);
       });
   };
 
   const sendNewPayload = () => {
-    setMessage("Saving...");
+    setMessage('Saving...');
     protectedApi
-      .post("/api/v1/faculty-allocation/", payload)
+      .post('/api/v1/faculty-allocation/', payload)
       .then((response) => {
         if (response?.status === 201) {
-          console.log("Object created", response?.payload?.data);
+          console.log('Object created', response?.payload?.data);
           fetFacultyAllocationData();
           //   setMessage("Saved");
         }
       })
       .catch((error) => {
-        setMessage("Failed");
+        setMessage('Failed');
         setTimeout(() => {
           setMessage(undefined);
         }, 2000);
-        console.error("New faculty allocation request failed: ", error);
+        console.error('New faculty allocation request failed: ', error);
       });
   };
 
   const sendPayload = () => {
     switch (mode) {
-      case "edit":
+      case 'edit':
         sendEditPayload();
         break;
-      case "new":
+      case 'new':
         sendNewPayload();
         break;
       //   case "delete":
       //     sendDeletePayload();
       //     break;
+      default:
+        break;
     }
   };
 
   return (
     <>
       <div className="flex flex-col items-center max-h-screen p-8">
-        <div className="text-2xl text-gray-700 font-medium">
-          Manage Faculty Allocation
-        </div>
+        <div className="text-2xl text-gray-700 font-medium">Manage Faculty Allocation</div>
         <div className="flex w-11/12 m-3 ml-5">
           <button
             onClick={() => {
               setPayload({
                 id: null,
-                faculty: "",
-                subject: "",
+                faculty: '',
+                subject: '',
               });
-              setMode("new");
+              setMode('new');
             }}
             className="p-1 px-2 bg-sky-600 hover:bg-oceanic-blue text-white rounded"
-            {...(mode ? { disabled: true } : "")}
+            disabled={mode ? true : undefined}
           >
             New allocation
           </button>
@@ -187,16 +176,12 @@ const FacultyAllocation = () => {
                     Faculty Name
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...facultyAllocationData];
-                        data.sort((a, b) =>
-                          a.faculty_first_name.localeCompare(
-                            b.faculty_first_name
-                          )
-                        );
+                        console.log('sorting');
+                        const data = [...facultyAllocationData];
+                        data.sort((a, b) => a.faculty_first_name.localeCompare(b.faculty_first_name));
                         setFacultyAllocationData(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -215,16 +200,12 @@ const FacultyAllocation = () => {
                     Faculty short name
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...facultyAllocationData];
-                        data.sort((a, b) =>
-                          a.faculty_short_name.localeCompare(
-                            b.faculty_short_name
-                          )
-                        );
+                        console.log('sorting');
+                        const data = [...facultyAllocationData];
+                        data.sort((a, b) => a.faculty_short_name.localeCompare(b.faculty_short_name));
                         setFacultyAllocationData(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -243,12 +224,12 @@ const FacultyAllocation = () => {
                     Subject code
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...facultyAllocationData];
+                        console.log('sorting');
+                        const data = [...facultyAllocationData];
                         data.sort((a, b) => a.subject.localeCompare(b.subject));
                         setFacultyAllocationData(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -267,16 +248,12 @@ const FacultyAllocation = () => {
                     Subject short name
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...facultyAllocationData];
-                        data.sort((a, b) =>
-                          a.subject_short_name.localeCompare(
-                            b.subject_short_name
-                          )
-                        );
+                        console.log('sorting');
+                        const data = [...facultyAllocationData];
+                        data.sort((a, b) => a.subject_short_name.localeCompare(b.subject_short_name));
                         setFacultyAllocationData(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -299,31 +276,24 @@ const FacultyAllocation = () => {
               {facultyAllocationData && facultyAllocationData?.length > 0 ? (
                 facultyAllocationData.map((allocation) => (
                   <tr className="bg-white border-b  ">
-                    <td
-                      scope="row"
-                      className="px-6 py-4 font-medium whitespace-nowrap"
-                    >
-                      {`${allocation?.faculty_first_name} ${
-                        allocation?.faculty_middle_name || ""
-                      } ${allocation?.faculty_last_name}`}
+                    <td className="px-6 py-4 font-medium whitespace-nowrap">
+                      {`${allocation?.faculty_first_name} ${allocation?.faculty_middle_name || ''} ${
+                        allocation?.faculty_last_name
+                      }`}
                     </td>
-                    <td className="px-6 py-4">
-                      {allocation?.faculty_short_name}
-                    </td>
+                    <td className="px-6 py-4">{allocation?.faculty_short_name}</td>
                     <td className="px-6 py-4">{allocation?.subject}</td>
-                    <td className="px-6 py-4">
-                      {allocation?.subject_short_name}
-                    </td>
+                    <td className="px-6 py-4">{allocation?.subject_short_name}</td>
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => {
                           const data = { ...allocation };
                           data.id = allocation?.id;
                           setPayload(data);
-                          setMode("edit");
+                          setMode('edit');
                         }}
                         className="font-medium text-blue-600 px-1 hover:underline"
-                        {...(mode ? { disabled: true } : "")}
+                        disabled={mode ? true : undefined}
                       >
                         Edit
                       </button>
@@ -348,23 +318,20 @@ const FacultyAllocation = () => {
           </table>
         </div>
       </div>
-      {mode && mode !== "delete" ? (
+      {mode && mode !== 'delete' ? (
         <div className="flex flex-col items-center justify-center bg-black bg-opacity-20 w-full h-full absolute top-0 left-0">
           <div className="flex flex-col justify-start w-1/2 max-h-11/12 bg-white rounded-xl">
             <div className="h-16 bg-gray-100 w-full rounded-xl flex justify-center items-center font-bold text-gray-600">
-              {mode === "new" ? "New" : "Edit"} Allocation
+              {mode === 'new' ? 'New' : 'Edit'} Allocation
             </div>
             <div className="p-9 overflow-x-auto">
               <div className="mb-6">
-                <label
-                  htmlFor="faculty"
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                >
+                <label htmlFor="faculty" className="block mb-2 text-sm font-medium text-gray-900">
                   Faculty
                 </label>
                 <select
                   name="faculty"
-                  value={payload?.faculty || "Choose a faculty"}
+                  value={payload?.faculty || 'Choose a faculty'}
                   onChange={handlePayloadUpdate}
                   id="faculty"
                   className="bg-gray-50 border-gray-300 border-2 text-gray-900 text-sm rounded-lg block w-full p-2.5"
@@ -375,25 +342,20 @@ const FacultyAllocation = () => {
                   </option>
                   {faculties
                     ? faculties.map((faculty) => (
-                        <option name="faculty" value={faculty.email}>{`${
-                          faculty.first_name
-                        } ${faculty.middle_name || ""} ${faculty.last_name} (${
-                          faculty.email
-                        })`}</option>
+                        <option name="faculty" value={faculty.email}>{`${faculty.first_name} ${faculty.middle_name || ''} ${
+                          faculty.last_name
+                        } (${faculty.email})`}</option>
                       ))
-                    : ""}
+                    : ''}
                 </select>
               </div>
               <div className="mb-6">
-                <label
-                  htmlFor="subject"
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                >
+                <label htmlFor="subject" className="block mb-2 text-sm font-medium text-gray-900">
                   Subject
                 </label>
                 <select
                   name="subject"
-                  value={payload?.subject || "Choose a subject"}
+                  value={payload?.subject || 'Choose a subject'}
                   onChange={handlePayloadUpdate}
                   id="subject"
                   className="bg-gray-50 border-gray-300 border-2 text-gray-900 text-sm rounded-lg block w-full p-2.5"
@@ -410,7 +372,7 @@ const FacultyAllocation = () => {
                           value={subject.subject_code}
                         >{`${subject.subject_code} - ${subject.subject_short_name}`}</option>
                       ))
-                    : ""}
+                    : ''}
                 </select>
               </div>
               <div className="flex justify-start space-x-3">
@@ -419,12 +381,9 @@ const FacultyAllocation = () => {
                   className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white font-medium"
                   disabled={message}
                 >
-                  {message ? message : "save"}
+                  {message || 'save'}
                 </button>
-                <button
-                  onClick={resetStates}
-                  className="bg-red-500 hover:bg-red-600 px-5 py-2 rounded text-white font-medium"
-                >
+                <button onClick={resetStates} className="bg-red-500 hover:bg-red-600 px-5 py-2 rounded text-white font-medium">
                   cancel
                 </button>
               </div>
@@ -432,10 +391,10 @@ const FacultyAllocation = () => {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </>
   );
-};
+}
 
 export default FacultyAllocation;
