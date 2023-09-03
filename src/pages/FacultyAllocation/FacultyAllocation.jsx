@@ -47,6 +47,12 @@ const FacultyAllocation = () => {
   }, [mode]);
 
   const fetFacultyAllocationData = () => {
+    const sessionFacultyAllocationData = sessionStorage.getItem(
+      "facultyAllocationData"
+    );
+    if (sessionFacultyAllocationData) {
+      setFacultyAllocationData(JSON.parse(sessionFacultyAllocationData));
+    }
     protectedApi
       .get("/api/v1/faculty-allocation/")
       .then((response) => {
@@ -58,9 +64,15 @@ const FacultyAllocation = () => {
           setFacultyAllocationData(response?.data);
           setMode(undefined);
           setMessage(undefined);
+          sessionStorage.setItem(
+            "facultyAllocationData",
+            JSON.stringify(response?.data)
+          );
         }
       })
       .catch((error) => {
+        setFacultyAllocationData(undefined);
+        sessionStorage.removeItem("facultyAllocationData");
         setDataStatus("Something went wrong");
         console.error("Fetch faculty allocation data failed: ", error);
         // logout();
