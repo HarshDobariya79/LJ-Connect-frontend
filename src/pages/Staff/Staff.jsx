@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import { protectedApi } from "../../services/api";
-import logout from "../../utils/logout";
+import React, { useState, useEffect } from 'react';
+import { protectedApi } from '../../services/api';
+// import logout from '../../utils/logout';
 
-const Staff = () => {
+function Staff() {
   const [staffDetails, setStaffDetails] = useState();
-  const [dataStatus, setDataStatus] = useState("Loading...");
+  const [dataStatus, setDataStatus] = useState('Loading...');
   const [mode, setMode] = useState(false);
   const [payload, setPayload] = useState({});
   const [message, setMessage] = useState();
@@ -18,30 +18,30 @@ const Staff = () => {
   }, [mode]);
 
   const updateStaffList = () => {
-    const sessionStaffList = sessionStorage.getItem("staffList");
+    const sessionStaffList = sessionStorage.getItem('staffList');
     console.log(sessionStaffList);
     if (sessionStaffList) {
       setStaffDetails(JSON.parse(sessionStaffList));
     }
     protectedApi
-      .get("/api/v1/staff/")
+      .get('/api/v1/staff/')
       .then((response) => {
         if (response?.status === 200) {
           console.log(response.data);
-          if (response?.data?.length == 0) {
-            setDataStatus("No data available");
+          if (response?.data?.length === 0) {
+            setDataStatus('No data available');
           }
           setStaffDetails(response?.data);
           setMode(undefined);
           setMessage(undefined);
-          sessionStorage.setItem("staffList", JSON.stringify(response?.data));
+          sessionStorage.setItem('staffList', JSON.stringify(response?.data));
         }
       })
       .catch((error) => {
         setStaffDetails(undefined);
-        sessionStorage.removeItem("staffList");
-        setDataStatus("Something went wrong");
-        console.error("Fetch staff details failed: ", error);
+        sessionStorage.removeItem('staffList');
+        setDataStatus('Something went wrong');
+        console.error('Fetch staff details failed: ', error);
         // logout();
       });
   };
@@ -51,11 +51,8 @@ const Staff = () => {
   }, []);
 
   const handlePayloadUpdate = (event) => {
-    const name = event.target.name;
-    const value =
-      event.target.type === "checkbox"
-        ? event.target.checked
-        : event.target.value;
+    const { name } = event.target;
+    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
     setPayload({ ...payload, [name]: value });
   };
 
@@ -66,42 +63,42 @@ const Staff = () => {
   };
 
   const sendEditPayload = () => {
-    setMessage("Updating...");
+    setMessage('Updating...');
     protectedApi
-      .put("/api/v1/staff/", payload)
+      .put('/api/v1/staff/', payload)
       .then((response) => {
         if (response?.status === 200) {
-          console.log("Object created", response?.payload?.data);
+          console.log('Object created', response?.payload?.data);
           updateStaffList();
           // setMessage("Updated");
         }
       })
       .catch((error) => {
-        setMessage("Failed");
+        setMessage('Failed');
         setTimeout(() => {
           setMessage(undefined);
         }, 2000);
-        console.error("Staff update request failed: ", error);
+        console.error('Staff update request failed: ', error);
       });
   };
 
   const sendNewPayload = () => {
-    setMessage("Saving...");
+    setMessage('Saving...');
     protectedApi
-      .post("/api/v1/staff/", payload)
+      .post('/api/v1/staff/', payload)
       .then((response) => {
         if (response?.status === 201) {
-          console.log("Object created", response?.payload?.data);
+          console.log('Object created', response?.payload?.data);
           updateStaffList();
           // setMessage("Saved");
         }
       })
       .catch((error) => {
-        setMessage("Failed");
+        setMessage('Failed');
         setTimeout(() => {
           setMessage(undefined);
         }, 2000);
-        console.error("New staff creation request failed: ", error);
+        console.error('New staff creation request failed: ', error);
       });
   };
 
@@ -118,15 +115,17 @@ const Staff = () => {
 
   const sendPayload = () => {
     switch (mode) {
-      case "edit":
+      case 'edit':
         sendEditPayload();
         break;
-      case "new":
+      case 'new':
         sendNewPayload();
         break;
       //   case "delete":
       //     sendDeletePayload();
       //     break;
+      default:
+        break;
     }
   };
 
@@ -138,21 +137,21 @@ const Staff = () => {
           <button
             onClick={() => {
               setPayload({
-                email: "",
-                first_name: "",
-                last_name: "",
-                short_name: "",
-                birth_date: "",
-                mobile_number: "",
-                gender: "M",
-                category: "T",
+                email: '',
+                first_name: '',
+                last_name: '',
+                short_name: '',
+                birth_date: '',
+                mobile_number: '',
+                gender: 'M',
+                category: 'T',
                 active: false,
                 admin: false,
               });
-              setMode("new");
+              setMode('new');
             }}
             className="p-1 px-2 bg-sky-600 hover:bg-oceanic-blue text-white rounded"
-            {...(mode ? { disabled: true } : "")}
+            disabled={mode ? true : undefined}
           >
             Add staff
           </button>
@@ -167,12 +166,12 @@ const Staff = () => {
                     Email
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...staffDetails];
+                        console.log('sorting');
+                        const data = [...staffDetails];
                         data.sort((a, b) => a.email.localeCompare(b.email));
                         setStaffDetails(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -191,14 +190,12 @@ const Staff = () => {
                     Name
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...staffDetails];
-                        data.sort((a, b) =>
-                          a.first_name.localeCompare(b.first_name)
-                        );
+                        console.log('sorting');
+                        const data = [...staffDetails];
+                        data.sort((a, b) => a.first_name.localeCompare(b.first_name));
                         setStaffDetails(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -217,14 +214,12 @@ const Staff = () => {
                     Category
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...staffDetails];
-                        data.sort((a, b) =>
-                          a.category.localeCompare(b.category)
-                        );
+                        console.log('sorting');
+                        const data = [...staffDetails];
+                        data.sort((a, b) => a.category.localeCompare(b.category));
                         setStaffDetails(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -250,27 +245,18 @@ const Staff = () => {
               {staffDetails && staffDetails?.length > 0 ? (
                 staffDetails.map((staff) => (
                   <tr className="bg-white border-b  ">
-                    <td
-                      scope="row"
-                      className="px-6 py-4 font-medium whitespace-nowrap text-left"
-                    >
-                      {staff.email}
-                    </td>
-                    <td className="px-6 py-4">
-                      {`${staff?.first_name} ${staff?.middle_name || ""} ${
-                        staff?.last_name
-                      }`}
-                    </td>
+                    <td className="px-6 py-4 font-medium whitespace-nowrap text-left">{staff.email}</td>
+                    <td className="px-6 py-4">{`${staff?.first_name} ${staff?.middle_name || ''} ${staff?.last_name}`}</td>
                     <td className="px-6 py-4">{staff.category}</td>
                     <td className="px-6 py-4">{staff.mobile_number}</td>
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => {
                           setPayload(staff);
-                          setMode("edit");
+                          setMode('edit');
                         }}
                         className="font-medium text-blue-600 px-1 hover:underline"
-                        {...(mode ? { disabled: true } : "")}
+                        disabled={mode ? true : undefined}
                       >
                         Edit
                       </button>
@@ -295,18 +281,15 @@ const Staff = () => {
           </table>
         </div>
       </div>
-      {mode && mode !== "delete" ? (
+      {mode && mode !== 'delete' ? (
         <div className="flex flex-col items-center justify-center bg-black bg-opacity-20 w-full h-full absolute top-0 left-0">
           <div className="flex flex-col justify-start w-3/5 max-h-11/12 bg-white rounded-xl">
             <div className="h-16 bg-gray-100 w-full rounded-xl flex justify-center items-center font-bold text-gray-600">
-              {mode === "new" ? "New" : "Edit"} Staff Detail
+              {mode === 'new' ? 'New' : 'Edit'} Staff Detail
             </div>
             <div className="p-9 overflow-x-auto">
               <div className="mb-6">
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 ">
                   Email address
                 </label>
                 <input
@@ -316,15 +299,12 @@ const Staff = () => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   value={payload?.email}
                   onChange={handlePayloadUpdate}
-                  {...(mode === "edit" ? { readOnly: true } : {})}
+                  readOnly={mode === 'edit'}
                 />
               </div>
               <div className="grid gap-6 mb-6 md:grid-cols-2">
                 <div>
-                  <label
-                    htmlFor="first_name"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
+                  <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 ">
                     First name
                   </label>
                   <input
@@ -338,10 +318,7 @@ const Staff = () => {
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="middle_name"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
+                  <label htmlFor="middle_name" className="block mb-2 text-sm font-medium text-gray-900 ">
                     Middle name
                   </label>
                   <input
@@ -354,10 +331,7 @@ const Staff = () => {
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="last_name"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
+                  <label htmlFor="last_name" className="block mb-2 text-sm font-medium text-gray-900 ">
                     Last name
                   </label>
                   <input
@@ -371,10 +345,7 @@ const Staff = () => {
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="short_name"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
+                  <label htmlFor="short_name" className="block mb-2 text-sm font-medium text-gray-900 ">
                     Short name
                   </label>
                   <input
@@ -388,10 +359,7 @@ const Staff = () => {
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="birth_date"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
+                  <label htmlFor="birth_date" className="block mb-2 text-sm font-medium text-gray-900 ">
                     Birth Date<span className="font-normal"> (YYYY-MM-DD)</span>
                   </label>
                   <input
@@ -405,10 +373,7 @@ const Staff = () => {
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="mobile_number"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
+                  <label htmlFor="mobile_number" className="block mb-2 text-sm font-medium text-gray-900 ">
                     Mobile Number
                     <span className="font-normal"> (+91xxxxxxxxxx)</span>
                   </label>
@@ -423,9 +388,7 @@ const Staff = () => {
                   />
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900 ">
-                    Gender
-                  </label>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 ">Gender</label>
                   <div className="flex items-center space-x-2">
                     <input
                       id="male"
@@ -434,12 +397,9 @@ const Staff = () => {
                       name="gender"
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                       onChange={handlePayloadUpdate}
-                      {...(payload?.gender === "M" ? { checked: true } : null)}
+                      checked={payload?.gender === 'M'}
                     />
-                    <label
-                      htmlFor="gender"
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    >
+                    <label htmlFor="gender" className="ml-2 text-sm font-medium text-gray-900">
                       Male
                     </label>
                     <input
@@ -447,14 +407,11 @@ const Staff = () => {
                       type="radio"
                       value="F"
                       name="gender"
-                      checked={payload?.gender === "F"}
+                      checked={payload?.gender === 'F'}
                       onChange={handlePayloadUpdate}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
-                    <label
-                      htmlFor="gender"
-                      className="ml-2 text-sm font-medium text-gray-900 "
-                    >
+                    <label htmlFor="gender" className="ml-2 text-sm font-medium text-gray-900 ">
                       Female
                     </label>
                     <input
@@ -462,22 +419,17 @@ const Staff = () => {
                       type="radio"
                       value="O"
                       name="gender"
-                      checked={payload?.gender === "O"}
+                      checked={payload?.gender === 'O'}
                       onChange={handlePayloadUpdate}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
-                    <label
-                      htmlFor="gender"
-                      className="ml-2 text-sm font-medium text-gray-900 "
-                    >
+                    <label htmlFor="gender" className="ml-2 text-sm font-medium text-gray-900 ">
                       Other
                     </label>
                   </div>
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900 ">
-                    Category
-                  </label>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 ">Category</label>
                   <div className="flex items-center space-x-2">
                     <input
                       id="teaching"
@@ -485,13 +437,10 @@ const Staff = () => {
                       value="T"
                       name="category"
                       onChange={handlePayloadUpdate}
-                      checked={payload?.category === "T"}
+                      checked={payload?.category === 'T'}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
-                    <label
-                      htmlFor="category"
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    >
+                    <label htmlFor="category" className="ml-2 text-sm font-medium text-gray-900">
                       Teaching
                     </label>
                     <input
@@ -500,13 +449,10 @@ const Staff = () => {
                       value="NT"
                       name="category"
                       onChange={handlePayloadUpdate}
-                      checked={payload?.category === "NT"}
+                      checked={payload?.category === 'NT'}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                     />
-                    <label
-                      htmlFor="category"
-                      className="ml-2 text-sm font-medium text-gray-900 "
-                    >
+                    <label htmlFor="category" className="ml-2 text-sm font-medium text-gray-900 ">
                       Non-teaching
                     </label>
                   </div>
@@ -516,16 +462,13 @@ const Staff = () => {
                 <input
                   id="active"
                   type="checkbox"
-                  value={true}
+                  value
                   name="active"
                   onChange={handlePayloadUpdate}
-                  {...(payload?.active === true ? { checked: true } : null)}
+                  checked={payload?.active === true}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                 />
-                <label
-                  htmlFor="active"
-                  className="ml-2 text-sm font-medium text-gray-900"
-                >
+                <label htmlFor="active" className="ml-2 text-sm font-medium text-gray-900">
                   Active
                 </label>
               </div>
@@ -533,16 +476,13 @@ const Staff = () => {
                 <input
                   id="admin"
                   type="checkbox"
-                  value={true}
+                  value
                   name="admin"
                   onChange={handlePayloadUpdate}
-                  {...(payload?.admin === true ? { checked: true } : null)}
+                  checked={payload?.admin === true}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                 />
-                <label
-                  htmlFor="admin"
-                  className="ml-2 text-sm font-medium text-gray-900"
-                >
+                <label htmlFor="admin" className="ml-2 text-sm font-medium text-gray-900">
                   Admin
                 </label>
               </div>
@@ -552,12 +492,9 @@ const Staff = () => {
                   className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white font-medium"
                   disabled={message}
                 >
-                  {message ? message : "save"}
+                  {message || 'save'}
                 </button>
-                <button
-                  onClick={resetStates}
-                  className="bg-red-500 hover:bg-red-600 px-5 py-2 rounded text-white font-medium"
-                >
+                <button onClick={resetStates} className="bg-red-500 hover:bg-red-600 px-5 py-2 rounded text-white font-medium">
                   cancel
                 </button>
               </div>
@@ -565,10 +502,10 @@ const Staff = () => {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </>
   );
-};
+}
 
 export default Staff;

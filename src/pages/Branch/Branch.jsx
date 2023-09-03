@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { protectedApi } from "../../services/api";
+import React, { useEffect, useState } from 'react';
+import { protectedApi } from '../../services/api';
 
-const Branch = () => {
+function Branch() {
   const [branchData, setBranchData] = useState();
-  const [dataStatus, setDataStatus] = useState("Loading...");
+  const [dataStatus, setDataStatus] = useState('Loading...');
   const [mode, setMode] = useState();
   const [payload, setPayload] = useState({});
   const [message, setMessage] = useState();
@@ -17,30 +17,30 @@ const Branch = () => {
   }, [mode]);
 
   const fetchBranchData = () => {
-    const sessionBranchData = sessionStorage.getItem("branchData");
+    const sessionBranchData = sessionStorage.getItem('branchData');
     console.log(sessionBranchData);
     if (sessionBranchData) {
       setBranchData(JSON.parse(sessionBranchData));
     }
     protectedApi
-      .get("/api/v1/branch/")
+      .get('/api/v1/branch/')
       .then((response) => {
         if (response?.status === 200) {
           console.log(response.data);
-          if (response?.data?.length == 0) {
-            setDataStatus("No data available");
+          if (response?.data?.length === 0) {
+            setDataStatus('No data available');
           }
           setBranchData(response?.data);
           setMode(undefined);
           setMessage(undefined);
-          sessionStorage.setItem("branchData", JSON.stringify(response?.data));
+          sessionStorage.setItem('branchData', JSON.stringify(response?.data));
         }
       })
       .catch((error) => {
         setBranchData(undefined);
-        sessionStorage.removeItem("branchData");
-        setDataStatus("Something went wrong");
-        console.error("Fetch branch data failed: ", error);
+        sessionStorage.removeItem('branchData');
+        setDataStatus('Something went wrong');
+        console.error('Fetch branch data failed: ', error);
         // logout();
       });
   };
@@ -50,11 +50,8 @@ const Branch = () => {
   }, []);
 
   const handlePayloadUpdate = (event) => {
-    const name = event.target.name;
-    const value =
-      event.target.type === "checkbox"
-        ? event.target.checked
-        : event.target.value;
+    const { name } = event.target;
+    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
     setPayload({ ...payload, [name]: value });
   };
 
@@ -65,56 +62,58 @@ const Branch = () => {
   };
 
   const sendEditPayload = () => {
-    setMessage("Updating...");
+    setMessage('Updating...');
     protectedApi
-      .put("/api/v1/branch/", payload)
+      .put('/api/v1/branch/', payload)
       .then((response) => {
         if (response?.status === 200) {
-          console.log("Branch object created", response?.payload?.data);
+          console.log('Branch object created', response?.payload?.data);
           fetchBranchData();
           //   setMessage("Updated");
         }
       })
       .catch((error) => {
-        setMessage("Failed");
+        setMessage('Failed');
         setTimeout(() => {
           setMessage(undefined);
         }, 2000);
-        console.error("Branch update request failed: ", error);
+        console.error('Branch update request failed: ', error);
       });
   };
 
   const sendNewPayload = () => {
-    setMessage("Saving...");
+    setMessage('Saving...');
     protectedApi
-      .post("/api/v1/branch/", payload)
+      .post('/api/v1/branch/', payload)
       .then((response) => {
         if (response?.status === 201) {
-          console.log("Object created", response?.payload?.data);
+          console.log('Object created', response?.payload?.data);
           fetchBranchData();
           //   setMessage("Saved");
         }
       })
       .catch((error) => {
-        setMessage("Failed");
+        setMessage('Failed');
         setTimeout(() => {
           setMessage(undefined);
         }, 2000);
-        console.error("New branch creation request failed: ", error);
+        console.error('New branch creation request failed: ', error);
       });
   };
 
   const sendPayload = () => {
     switch (mode) {
-      case "edit":
+      case 'edit':
         sendEditPayload();
         break;
-      case "new":
+      case 'new':
         sendNewPayload();
         break;
       //   case "delete":
       //     sendDeletePayload();
       //     break;
+      default:
+        break;
     }
   };
 
@@ -126,15 +125,15 @@ const Branch = () => {
           <button
             onClick={() => {
               setPayload({
-                branch_code: "",
-                branch_short_name: "",
-                branch_full_name: "",
+                branch_code: '',
+                branch_short_name: '',
+                branch_full_name: '',
                 available: true,
               });
-              setMode("new");
+              setMode('new');
             }}
             className="p-1 px-2 bg-sky-600 hover:bg-oceanic-blue text-white rounded"
-            {...(mode ? { disabled: true } : "")}
+            disabled={mode ? true : undefined}
           >
             Add branch
           </button>
@@ -149,14 +148,12 @@ const Branch = () => {
                     Code
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...branchData];
-                        data.sort((a, b) =>
-                          a.branch_code.localeCompare(b.branch_code)
-                        );
+                        console.log('sorting');
+                        const data = [...branchData];
+                        data.sort((a, b) => a.branch_code.localeCompare(b.branch_code));
                         setBranchData(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -175,14 +172,12 @@ const Branch = () => {
                     Name
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...branchData];
-                        data.sort((a, b) =>
-                          a.branch_short_name.localeCompare(b.branch_short_name)
-                        );
+                        console.log('sorting');
+                        const data = [...branchData];
+                        data.sort((a, b) => a.branch_short_name.localeCompare(b.branch_short_name));
                         setBranchData(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -201,14 +196,12 @@ const Branch = () => {
                     Full Name
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...branchData];
-                        data.sort((a, b) =>
-                          a.branch_full_name.localeCompare(b.branch_full_name)
-                        );
+                        console.log('sorting');
+                        const data = [...branchData];
+                        data.sort((a, b) => a.branch_full_name.localeCompare(b.branch_full_name));
                         setBranchData(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -227,12 +220,12 @@ const Branch = () => {
                     Available
                     <button
                       onClick={() => {
-                        console.log("sorting");
-                        let data = [...branchData];
+                        console.log('sorting');
+                        const data = [...branchData];
                         data.sort((a, b) => b.available - a.available);
                         setBranchData(data);
                       }}
-                      {...(mode ? { disabled: true } : "")}
+                      disabled={mode ? true : undefined}
                     >
                       <svg
                         className="w-3 h-3 ml-1.5"
@@ -255,29 +248,20 @@ const Branch = () => {
               {branchData && branchData?.length > 0 ? (
                 branchData.map((branch) => (
                   <tr className="bg-white border-b  ">
-                    <td
-                      scope="row"
-                      className="px-6 py-4 font-medium whitespace-nowrap"
-                    >
-                      {branch?.branch_code}
-                    </td>
+                    <td className="px-6 py-4 font-medium whitespace-nowrap">{branch?.branch_code}</td>
                     <td className="px-6 py-4">{branch?.branch_short_name}</td>
                     <td className="px-6 py-4">{branch?.branch_full_name}</td>
                     <td className="px-6 py-4">
-                      {branch?.available ? (
-                        <span className="text-green-600">Yes</span>
-                      ) : (
-                        <span className="text-red-600">No</span>
-                      )}
+                      {branch?.available ? <span className="text-green-600">Yes</span> : <span className="text-red-600">No</span>}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => {
                           setPayload(branch);
-                          setMode("edit");
+                          setMode('edit');
                         }}
                         className="font-medium text-blue-600 px-1 hover:underline"
-                        {...(mode ? { disabled: true } : "")}
+                        disabled={mode ? true : undefined}
                       >
                         Edit
                       </button>
@@ -302,19 +286,16 @@ const Branch = () => {
           </table>
         </div>
       </div>
-      {mode && mode !== "delete" ? (
+      {mode && mode !== 'delete' ? (
         <div className="flex flex-col items-center justify-center bg-black bg-opacity-20 w-full h-full absolute top-0 left-0">
           <div className="flex flex-col justify-start w-1/2 max-h-11/12 bg-white rounded-xl">
             <div className="h-16 bg-gray-100 w-full rounded-xl flex justify-center items-center font-bold text-gray-600">
-              {mode === "new" ? "New" : "Edit"} Branch
+              {mode === 'new' ? 'New' : 'Edit'} Branch
             </div>
             <div className="p-9 overflow-x-auto">
               <div className="grid gap-6 mb-6 md:grid-cols-2">
                 <div>
-                  <label
-                    htmlFor="branch_code"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
+                  <label htmlFor="branch_code" className="block mb-2 text-sm font-medium text-gray-900 ">
                     Branch code
                   </label>
                   <input
@@ -324,14 +305,11 @@ const Branch = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     value={payload?.branch_code}
                     onChange={handlePayloadUpdate}
-                    {...(mode === "edit" ? { readOnly: true } : {})}
+                    readOnly={mode === 'edit'}
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="branch_short_name"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
+                  <label htmlFor="branch_short_name" className="block mb-2 text-sm font-medium text-gray-900 ">
                     Short name
                   </label>
                   <input
@@ -346,10 +324,7 @@ const Branch = () => {
                 </div>
               </div>
               <div className="mb-6">
-                <label
-                  htmlFor="branch_full_name"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
+                <label htmlFor="branch_full_name" className="block mb-2 text-sm font-medium text-gray-900 ">
                   Full name
                 </label>
                 <input
@@ -365,16 +340,13 @@ const Branch = () => {
                 <input
                   id="available"
                   type="checkbox"
-                  value={true}
+                  value
                   name="available"
                   onChange={handlePayloadUpdate}
-                  {...(payload?.available === true ? { checked: true } : null)}
+                  checked={payload?.available === true}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                 />
-                <label
-                  htmlFor="available"
-                  className="ml-2 text-sm font-medium text-gray-900"
-                >
+                <label htmlFor="available" className="ml-2 text-sm font-medium text-gray-900">
                   Available
                 </label>
               </div>
@@ -384,12 +356,9 @@ const Branch = () => {
                   className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white font-medium"
                   disabled={message}
                 >
-                  {message ? message : "save"}
+                  {message || 'save'}
                 </button>
-                <button
-                  onClick={resetStates}
-                  className="bg-red-500 hover:bg-red-600 px-5 py-2 rounded text-white font-medium"
-                >
+                <button onClick={resetStates} className="bg-red-500 hover:bg-red-600 px-5 py-2 rounded text-white font-medium">
                   cancel
                 </button>
               </div>
@@ -397,10 +366,10 @@ const Branch = () => {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </>
   );
-};
+}
 
 export default Branch;
