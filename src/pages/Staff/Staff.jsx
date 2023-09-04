@@ -17,14 +17,16 @@ function Staff() {
     console.log(mode);
   }, [mode]);
 
-  const updateStaffList = () => {
+  const fetchStaffData = () => {
     const sessionStaffList = sessionStorage.getItem('staffList');
     console.log(sessionStaffList);
     if (sessionStaffList) {
       setStaffDetails(JSON.parse(sessionStaffList));
     }
+
+    const abortController = new AbortController();
     protectedApi
-      .get('/api/v1/staff/')
+      .get('/api/v1/staff/', { signal: abortController.signal })
       .then((response) => {
         if (response?.status === 200) {
           console.log(response.data);
@@ -38,16 +40,23 @@ function Staff() {
         }
       })
       .catch((error) => {
-        setStaffDetails(undefined);
-        sessionStorage.removeItem('staffList');
-        setDataStatus('Something went wrong');
-        console.error('Fetch staff details failed: ', error);
-        // logout();
+        if (error.name === 'CanceledError') {
+          console.log('fetchStaffData request was aborted');
+        } else {
+          setStaffDetails(undefined);
+          sessionStorage.removeItem('staffList');
+          setDataStatus('Something went wrong');
+          console.error('Fetch staff details failed: ', error);
+          // logout();
+        }
       });
+    return abortController;
   };
 
   useEffect(() => {
-    updateStaffList();
+    const fetchRequest = fetchStaffData();
+
+    return () => fetchRequest.abort();
   }, []);
 
   const handlePayloadUpdate = (event) => {
@@ -69,7 +78,7 @@ function Staff() {
       .then((response) => {
         if (response?.status === 200) {
           console.log('Object created', response?.payload?.data);
-          updateStaffList();
+          fetchStaffData();
           // setMessage("Updated");
         }
       })
@@ -89,7 +98,7 @@ function Staff() {
       .then((response) => {
         if (response?.status === 201) {
           console.log('Object created', response?.payload?.data);
-          updateStaffList();
+          fetchStaffData();
           // setMessage("Saved");
         }
       })
