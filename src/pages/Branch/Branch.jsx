@@ -22,8 +22,10 @@ function Branch() {
     if (sessionBranchData) {
       setBranchData(JSON.parse(sessionBranchData));
     }
+
+    const abortController = new AbortController();
     protectedApi
-      .get('/api/v1/branch/')
+      .get('/api/v1/branch/', { signal: abortController.signal })
       .then((response) => {
         if (response?.status === 200) {
           console.log(response.data);
@@ -37,16 +39,23 @@ function Branch() {
         }
       })
       .catch((error) => {
-        setBranchData(undefined);
-        sessionStorage.removeItem('branchData');
-        setDataStatus('Something went wrong');
-        console.error('Fetch branch data failed: ', error);
-        // logout();
+        if (error.name === 'CanceledError') {
+          console.log('fetchBranchData request was aborted');
+        } else {
+          setBranchData(undefined);
+          sessionStorage.removeItem('branchData');
+          setDataStatus('Something went wrong');
+          console.error('Fetch branch data failed: ', error);
+          // logout();
+        }
       });
+    return abortController;
   };
 
   useEffect(() => {
-    fetchBranchData();
+    const fetchRequest = fetchBranchData();
+
+    return () => fetchRequest.abort();
   }, []);
 
   const handlePayloadUpdate = (event) => {
