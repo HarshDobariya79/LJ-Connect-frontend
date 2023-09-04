@@ -51,8 +51,10 @@ function FacultyAllocation() {
     if (sessionFacultyAllocationData) {
       setFacultyAllocationData(JSON.parse(sessionFacultyAllocationData));
     }
+
+    const abortController = new AbortController();
     protectedApi
-      .get('/api/v1/faculty-allocation/')
+      .get('/api/v1/faculty-allocation/', { signal: abortController.signal })
       .then((response) => {
         if (response?.status === 200) {
           console.log(response.data);
@@ -72,10 +74,13 @@ function FacultyAllocation() {
         console.error('Fetch faculty allocation data failed: ', error);
         // logout();
       });
+    return abortController;
   };
 
   useEffect(() => {
-    fetFacultyAllocationData();
+    const fetchRequest = fetFacultyAllocationData();
+
+    return () => fetchRequest.abort();
   }, []);
 
   const handlePayloadUpdate = (event) => {
