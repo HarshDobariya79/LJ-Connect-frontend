@@ -22,18 +22,23 @@ function Sidebar(props) {
     },
     {
       role: ['admin'],
-      title: 'Staff',
+      title: 'Manage Staff',
       path: '/staff',
     },
     {
       role: ['admin'],
-      title: 'Branch',
+      title: 'Manage Branch',
       path: '/branch',
     },
     {
       role: ['admin', 'hod'],
       title: 'Faculty Allocation',
       path: '/faculty-allocation',
+    },
+    {
+      role: ['admin', 'hod'],
+      title: 'Manage Batch',
+      path: '/batch',
     },
   ];
 
