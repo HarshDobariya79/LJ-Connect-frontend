@@ -334,35 +334,35 @@ function Student() {
               {mode === 'new' ? 'New' : 'Edit'} Student Detail
             </div>
             <div className="p-9 overflow-x-auto">
-              <div className="mb-6">
-                <label htmlFor="enrolment_no" className="block mb-2 text-sm font-medium text-gray-900 ">
-                  Enrolment Number
-                </label>
-                <input
-                  type="text"
-                  id="enrolment_no"
-                  name="enrolment_no"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  value={payload?.enrolment_no}
-                  onChange={handlePayloadUpdate}
-                  readOnly={mode === 'edit'}
-                />
-              </div>
-              <div className="mb-6">
-                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 ">
-                  Email address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  value={payload?.email}
-                  onChange={handlePayloadUpdate}
-                  readOnly={mode === 'edit'}
-                />
-              </div>
-              <div className="grid gap-6 mb-6 md:grid-cols-2">
+              <div className="grid gap-6 mb-5 md:grid-cols-2">
+                <div>
+                  <label htmlFor="enrolment_no" className="block mb-2 text-sm font-medium text-gray-900 ">
+                    Enrolment Number
+                  </label>
+                  <input
+                    type="text"
+                    id="enrolment_no"
+                    name="enrolment_no"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    value={payload?.enrolment_no}
+                    onChange={handlePayloadUpdate}
+                    readOnly={mode === 'edit'}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 ">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    value={payload?.email}
+                    onChange={handlePayloadUpdate}
+                    readOnly={mode === 'edit'}
+                  />
+                </div>
                 <div>
                   <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 ">
                     First name
@@ -481,7 +481,7 @@ function Student() {
                   <div className="flex items-center space-x-2">
                     <select
                       name="branch"
-                      value={payload?.branch || ''}
+                      value={mode === 'edit' && payload.branch ? payload.branch.branch_code : ''}
                       onChange={handlePayloadUpdate}
                       id="branch"
                       className="bg-gray-50 border-gray-300 border-2 text-gray-900 text-sm rounded-lg block w-full p-2.5"
@@ -502,7 +502,7 @@ function Student() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center space-x-2 mb-2">
+              <div className="flex items-center space-x-2 mb-4">
                 <input
                   id="graduated"
                   type="checkbox"
