@@ -9,6 +9,7 @@ import Auth from './pages/Auth/Auth';
 import Staff from './pages/Staff/Staff';
 import Branch from './pages/Branch/Branch';
 import FacultyAllocation from './pages/FacultyAllocation/FacultyAllocation';
+import Batch from './pages/Batch/Batch';
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -27,6 +28,9 @@ function App() {
         </Route>
         <Route path="/faculty-allocation" element={<Dashboard />}>
           <Route path="" element={<FacultyAllocation />} />
+        </Route>
+        <Route path="/batch" element={<Dashboard />}>
+          <Route path="" element={<Batch />} />
         </Route>
       </Route>
       <Route path="/" element={<Auth />} exact />

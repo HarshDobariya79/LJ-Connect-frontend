@@ -18,7 +18,7 @@ function Staff() {
   }, [mode]);
 
   const fetchStaffData = () => {
-    const sessionStaffList = sessionStorage.getItem('staffList');
+    const sessionStaffList = sessionStorage.getItem('staffData');
     console.log(sessionStaffList);
     if (sessionStaffList) {
       setStaffDetails(JSON.parse(sessionStaffList));
@@ -36,7 +36,7 @@ function Staff() {
           setStaffDetails(response?.data);
           setMode(undefined);
           setMessage(undefined);
-          sessionStorage.setItem('staffList', JSON.stringify(response?.data));
+          sessionStorage.setItem('staffData', JSON.stringify(response?.data));
         }
       })
       .catch((error) => {
@@ -44,7 +44,7 @@ function Staff() {
           console.log('fetchStaffData request was aborted');
         } else {
           setStaffDetails(undefined);
-          sessionStorage.removeItem('staffList');
+          sessionStorage.removeItem('staffData');
           setDataStatus('Something went wrong');
           console.error('Fetch staff details failed: ', error);
           // logout();
