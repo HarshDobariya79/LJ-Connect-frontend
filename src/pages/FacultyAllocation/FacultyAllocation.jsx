@@ -46,7 +46,7 @@ function FacultyAllocation() {
     console.log(mode);
   }, [mode]);
 
-  const fetFacultyAllocationData = () => {
+  const fetchFacultyAllocationData = () => {
     const sessionFacultyAllocationData = sessionStorage.getItem('facultyAllocationData');
     if (sessionFacultyAllocationData) {
       setFacultyAllocationData(JSON.parse(sessionFacultyAllocationData));
@@ -78,7 +78,7 @@ function FacultyAllocation() {
   };
 
   useEffect(() => {
-    const fetchRequest = fetFacultyAllocationData();
+    const fetchRequest = fetchFacultyAllocationData();
 
     return () => fetchRequest.abort();
   }, []);
@@ -102,7 +102,7 @@ function FacultyAllocation() {
       .then((response) => {
         if (response?.status === 200) {
           console.log('Faculty allocation object created', response?.payload?.data);
-          fetFacultyAllocationData();
+          fetchFacultyAllocationData();
           //   setMessage("Updated");
         }
       })
@@ -122,7 +122,7 @@ function FacultyAllocation() {
       .then((response) => {
         if (response?.status === 201) {
           console.log('Object created', response?.payload?.data);
-          fetFacultyAllocationData();
+          fetchFacultyAllocationData();
           //   setMessage("Saved");
         }
       })
