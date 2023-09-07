@@ -9,6 +9,7 @@ import Auth from './pages/Auth/Auth';
 import Staff from './pages/Staff/Staff';
 import Branch from './pages/Branch/Branch';
 import FacultyAllocation from './pages/FacultyAllocation/FacultyAllocation';
+import Student from './pages/Student/Student';
 import Batch from './pages/Batch/Batch';
 import Department from './pages/Department/Department';
 
@@ -23,6 +24,9 @@ function App() {
         </Route>
         <Route path="/staff" element={<Dashboard />}>
           <Route path="" element={<Staff />} />
+        </Route>
+        <Route path="/student" element={<Dashboard />}>
+          <Route path="" element={<Student />} />
         </Route>
         <Route path="/branch" element={<Dashboard />}>
           <Route path="" element={<Branch />} />

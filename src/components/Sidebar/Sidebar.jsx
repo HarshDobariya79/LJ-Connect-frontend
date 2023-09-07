@@ -27,6 +27,11 @@ function Sidebar(props) {
     },
     {
       role: ['admin'],
+      title: 'Manage Student',
+      path: '/student',
+    },
+    {
+      role: ['admin'],
       title: 'Manage Branch',
       path: '/branch',
     },
