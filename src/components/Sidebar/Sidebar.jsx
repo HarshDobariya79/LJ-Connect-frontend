@@ -36,6 +36,11 @@ function Sidebar(props) {
       path: '/branch',
     },
     {
+      role: ['admin'],
+      title: 'Manage Department',
+      path: '/department',
+    },
+    {
       role: ['admin', 'hod'],
       title: 'Faculty Allocation',
       path: '/faculty-allocation',

@@ -11,6 +11,7 @@ import Branch from './pages/Branch/Branch';
 import FacultyAllocation from './pages/FacultyAllocation/FacultyAllocation';
 import Student from './pages/Student/Student';
 import Batch from './pages/Batch/Batch';
+import Department from './pages/Department/Department';
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -29,6 +30,9 @@ function App() {
         </Route>
         <Route path="/branch" element={<Dashboard />}>
           <Route path="" element={<Branch />} />
+        </Route>
+        <Route path="/department" element={<Dashboard />}>
+          <Route path="" element={<Department />} />
         </Route>
         <Route path="/faculty-allocation" element={<Dashboard />}>
           <Route path="" element={<FacultyAllocation />} />
