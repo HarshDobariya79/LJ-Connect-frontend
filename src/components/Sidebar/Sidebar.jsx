@@ -27,7 +27,7 @@ function Sidebar(props) {
     },
     {
       role: ['admin'],
-      title: 'Student',
+      title: 'Manage Student',
       path: '/student',
     },
     {

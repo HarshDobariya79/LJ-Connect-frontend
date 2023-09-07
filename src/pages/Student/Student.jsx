@@ -1,23 +1,72 @@
 import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
 import { protectedApi } from '../../services/api';
 // import logout from '../../utils/logout';
 
 function Student() {
   const [studentDetails, setStudentDetails] = useState();
   const [dataStatus, setDataStatus] = useState('Loading...');
-  const [mode, setMode] = useState(false);
+  const [mode, setMode] = useState();
   const [payload, setPayload] = useState({});
   const [branches, setBranches] = useState();
+  const [branchChoices, setBranchChoices] = useState();
   const [message, setMessage] = useState();
   const defaultYear = new Date().getFullYear();
+
+  const resetStates = () => {
+    setMode(undefined);
+    setPayload(undefined);
+    setMessage(undefined);
+    setBranchChoices(undefined);
+  };
+
+  const fetchStudentData = () => {
+    const sessionStudentData = sessionStorage.getItem('studentData');
+    console.log(sessionStudentData);
+    if (sessionStudentData) {
+      setStudentDetails(JSON.parse(sessionStudentData));
+    }
+
+    const abortController = new AbortController();
+    protectedApi
+      .get('/api/v1/student/', { signal: abortController.signal })
+      .then((response) => {
+        if (response?.status === 200) {
+          console.log(response.data);
+          if (response?.data?.length === 0) {
+            setDataStatus('No data available');
+          }
+          setStudentDetails(response?.data);
+          resetStates();
+          sessionStorage.setItem('studentData', JSON.stringify(response?.data));
+        }
+      })
+      .catch((error) => {
+        if (error.name === 'CanceledError') {
+          console.log('fetchStudentData request was aborted');
+        } else {
+          setStudentDetails(undefined);
+          sessionStorage.removeItem('studentData');
+          setDataStatus('Something went wrong');
+          console.error('Fetch student data failed: ', error);
+          // logout();
+        }
+      });
+    return abortController;
+  };
 
   useEffect(() => {
     if (['new', 'edit'].includes(mode)) {
       protectedApi
         .get('/api/v1/branch/')
         .then((response) => {
-          setBranches(response?.data || []);
-          console.log(response.data);
+          const formattedData = response?.data?.map((branch) => {
+            return {
+              label: `${branch?.branch_code} - ${branch?.branch_short_name}`,
+              value: branch?.branch_code, // Use branch code as the value
+            };
+          });
+          setBranches(formattedData);
         })
         .catch((error) => {
           console.error(`Branch fetch error: ${error}`);
@@ -33,38 +82,24 @@ function Student() {
     console.log(mode);
   }, [mode]);
 
-  const updateStudentList = () => {
-    const sessionStudentList = sessionStorage.getItem('studentList');
-    console.log(sessionStudentList);
-    if (sessionStudentList) {
-      setStudentDetails(JSON.parse(sessionStudentList));
-    }
-    protectedApi
-      .get('/api/v1/student/')
-      .then((response) => {
-        if (response?.status === 200) {
-          console.log(response.data);
-          if (response?.data?.length === 0) {
-            setDataStatus('No data available');
-          }
-          setStudentDetails(response?.data);
-          setMode(undefined);
-          setMessage(undefined);
-          sessionStorage.setItem('studentList', JSON.stringify(response?.data));
-        }
-      })
-      .catch((error) => {
-        setStudentDetails(undefined);
-        sessionStorage.removeItem('studentList');
-        setDataStatus('Something went wrong');
-        console.error('Fetch student details failed: ', error);
-        // logout();
-      });
-  };
+  useEffect(() => {
+    const fetchRequest = fetchStudentData();
+
+    return () => fetchRequest.abort();
+  }, []);
 
   useEffect(() => {
-    updateStudentList();
-  }, []);
+    if (branchChoices !== undefined) {
+      const branchValue = Array.isArray(branchChoices) && branchChoices.length > 0 ? branchChoices[0].value : '';
+      const payloadData = {
+        ...payload,
+        branch: branchValue,
+      };
+      console.log('branchValue: ', branchValue);
+      console.log('Updated payloadData: ', payloadData);
+      setPayload(payloadData);
+    }
+  }, [branchChoices]);
 
   const handlePayloadUpdate = (event) => {
     const { name } = event.target;
@@ -72,22 +107,51 @@ function Student() {
     setPayload({ ...payload, [name]: value });
   };
 
-  const resetStates = () => {
-    setMode(undefined);
-    setPayload(undefined);
-    setMessage(undefined);
+  const handleBranchChoices = (selectedValue) => {
+    if (selectedValue && selectedValue.length > 0) {
+      setBranchChoices(selectedValue);
+    } else {
+      setBranchChoices([]);
+    }
   };
 
+  useEffect(() => {
+    console.log(branchChoices);
+  }, [branchChoices]);
+
+  useEffect(() => {
+    if (mode === 'edit') {
+      if (payload?.branch && typeof payload.branch === 'object') {
+        const branchChoicesData = [
+          {
+            label: `${payload.branch.branch_short_name}`,
+            value: payload.branch.branch_code,
+          },
+        ];
+
+        setBranchChoices(branchChoicesData);
+      } else {
+        setBranchChoices([]);
+      }
+    }
+  }, [mode]);
+
   const sendEditPayload = () => {
-    console.log('Payload to be sent:', payload);
+    const branchValues = Array.isArray(branchChoices) ? branchChoices.map((choice) => choice.value) : [];
+    const payloadData = {
+      ...payload,
+      branch: branchValues.length > 0 ? branchValues[0] : '',
+    };
+
+    console.log('Payload to be sent:', payloadData);
     setMessage('Updating...');
+
     protectedApi
-      .put('/api/v1/student/', payload)
+      .put('/api/v1/student/', payloadData)
       .then((response) => {
         if (response?.status === 200) {
           console.log('Object created', response?.payload?.data);
-          updateStudentList();
-          // setMessage("Updated");
+          fetchStudentData();
         }
       })
       .catch((error) => {
@@ -103,15 +167,18 @@ function Student() {
   };
 
   const sendNewPayload = () => {
-    console.log('Payload to be sent:', payload);
+    const payloadData = {
+      ...payload,
+      branch: Array.isArray(branchChoices) ? branchChoices[0]?.value : '',
+    };
+    console.log('Payload to be sent:', payloadData);
     setMessage('Saving...');
     protectedApi
-      .post('/api/v1/student/', payload)
+      .post('/api/v1/student/', payloadData)
       .then((response) => {
         if (response?.status === 201) {
           console.log('Object created', response?.payload?.data);
-          updateStudentList();
-          // setMessage("Saved");
+          fetchStudentData();
         }
       })
       .catch((error) => {
@@ -290,9 +357,9 @@ function Student() {
             <tbody>
               {studentDetails && studentDetails?.length > 0 ? (
                 studentDetails.map((student) => (
-                  <tr className="bg-white border-b  ">
-                    <td className="px-6 py-4 font-medium whitespace-nowrap text-left">{student.enrolment_no}</td>
-                    <td className="px-6 py-4 font-medium whitespace-nowrap text-left">{student.email}</td>
+                  <tr className="bg-white border-b text-center ">
+                    <td className="px-6 py-4 font-medium whitespace-nowrap">{student.enrolment_no}</td>
+                    <td className="px-6 py-4 font-medium whitespace-nowrap">{student.email}</td>
                     <td className="px-6 py-4">{`${student?.first_name} ${student?.middle_name || ''} ${student?.last_name}`}</td>
                     <td className="px-6 py-4">{student.branch.branch_short_name}</td>
                     <td className="px-6 py-4 text-right">
@@ -306,13 +373,6 @@ function Student() {
                       >
                         Edit
                       </button>
-                      {/* <button onClick={() => {
-                        setPayload(staff);
-                        setMode("delete");
-                        sendPayload();
-                      }} className="font-medium text-red-600 px-1  hover:underline">
-                        Remove
-                      </button> */}
                     </td>
                   </tr>
                 ))
@@ -334,7 +394,7 @@ function Student() {
               {mode === 'new' ? 'New' : 'Edit'} Student Detail
             </div>
             <div className="p-9 overflow-x-auto">
-              <div className="grid gap-6 mb-5 md:grid-cols-2">
+              <div className="grid gap-6 md:grid-cols-2">
                 <div>
                   <label htmlFor="enrolment_no" className="block mb-2 text-sm font-medium text-gray-900 ">
                     Enrolment Number
@@ -478,28 +538,15 @@ function Student() {
                   <label htmlFor="branch" className="block mb-2 text-sm font-medium text-gray-900">
                     Branch
                   </label>
-                  <div className="flex items-center space-x-2">
-                    <select
-                      name="branch"
-                      value={mode === 'edit' && payload.branch ? payload.branch.branch_code : ''}
-                      onChange={handlePayloadUpdate}
-                      id="branch"
-                      className="bg-gray-50 border-gray-300 border-2 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-                      required
-                    >
-                      <option value="">Choose a branch</option>
-                      {branches && branches.length > 0 ? (
-                        branches.map((branch) => (
-                          <option
-                            key={branch.branch_code}
-                            value={branch.branch_code}
-                          >{`${branch.branch_code} - ${branch.branch_short_name}`}</option>
-                        ))
-                      ) : (
-                        <option disabled>No branches available</option>
-                      )}
-                    </select>
-                  </div>
+                  <Select
+                    className="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg block w-full"
+                    options={branches}
+                    isMulti
+                    value={branchChoices}
+                    onChange={handleBranchChoices}
+                    maxMenuHeight={100}
+                    menuPlacement="auto"
+                  />
                 </div>
               </div>
               <div className="flex items-center space-x-2 mb-4">
