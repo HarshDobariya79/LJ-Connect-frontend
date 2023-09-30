@@ -50,6 +50,11 @@ function Sidebar(props) {
       title: 'Manage Batch',
       path: '/batch',
     },
+    {
+      role: ['admin', 'hod'],
+      title: 'Manage Subject',
+      path: '/subject',
+    },
   ];
 
   const applyConfig = config.filter((obj) => obj?.role.includes(role));

@@ -16,7 +16,9 @@ module.exports = {
     'react/prop-types': 'off',
     'import/no-named-as-default': 'off',
     'import/no-named-as-default-member': 'off',
-    'jsx-a11y/label-has-associated-control': 'off',
+    "jsx-a11y/control-has-associated-label": "off",
+    "jsx-a11y/label-has-associated-label": "off",
+    "jsx-a11y/label-has-associated-control": "off",
     'no-console': 'off',
   },
   env: {
